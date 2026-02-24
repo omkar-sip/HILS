@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-hils-bg text-hils-text font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-hils-bg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-hils-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-hils-text-dim;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-hils-card/80 backdrop-blur-md border border-hils-border rounded-xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:border-hils-accent/30 hover:shadow-lg hover:shadow-hils-accent-glow;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 bg-transparent text-white font-medium rounded-lg border border-white/80 transition-all duration-200 hover:bg-white hover:text-black active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-transparent text-hils-text-muted font-medium rounded-lg border border-hils-border transition-all duration-200 hover:border-white/40 hover:text-white active:scale-[0.98];
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-hils-surface border border-hils-border rounded-lg text-hils-text placeholder:text-hils-text-dim focus:outline-none focus:border-hils-accent focus:ring-1 focus:ring-hils-accent/30 transition-all duration-200;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-hils-text tracking-tight;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-hils-accent/10 text-hils-accent-light border border-hils-accent/20;
+  }
+}
