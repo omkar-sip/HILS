@@ -6,6 +6,8 @@ import ForgotPasswordPage from '@/mcps/auth/components/ForgotPasswordPage'
 import VerifyEmailPage from '@/mcps/auth/components/VerifyEmailPage'
 import DashboardPage from '@/pages/DashboardPage'
 import TopicPage from '@/pages/TopicPage'
+import ProfilePage from '@/pages/ProfilePage'
+import AcademicSetupWizard from '@/mcps/academic-profile/components/AcademicSetupWizard'
 import MainLayout from './layouts/MainLayout'
 import ProtectedRoute from '@/shared/components/ProtectedRoute'
 
@@ -20,7 +22,17 @@ export default function Router() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-                {/* Protected Routes */}
+                {/* Academic Setup – auth required, no profile gate */}
+                <Route
+                    path="/setup"
+                    element={
+                        <ProtectedRoute skipProfileCheck>
+                            <AcademicSetupWizard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Protected app routes */}
                 <Route
                     element={
                         <ProtectedRoute>
@@ -30,9 +42,10 @@ export default function Router() {
                 >
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/topic/:topicId" element={<TopicPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                 </Route>
 
-                {/* Default redirect */}
+                {/* Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>

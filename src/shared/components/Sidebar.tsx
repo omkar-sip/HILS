@@ -2,15 +2,17 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
     LayoutDashboard, LogOut, Sparkles,
-    ChevronLeft, User
+    ChevronLeft, Settings
 } from 'lucide-react'
 import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
+import { useUserProfileStore } from '@/mcps/user-profile/store/useUserProfileStore'
 import { useState } from 'react'
 
 export default function Sidebar() {
     const { user, logout } = useAuthStore()
     const { activePersona } = usePersonaStore()
+    const { userProfile } = useUserProfileStore()
     const navigate = useNavigate()
     const [collapsed, setCollapsed] = useState(false)
 
@@ -18,6 +20,10 @@ export default function Sidebar() {
         await logout()
         navigate('/login')
     }
+
+    const displayName = userProfile?.fullName || user?.displayName || 'Student'
+    const displayEmail = userProfile?.email || user?.email || ''
+    const initials = displayName.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
 
     const navItems = [
         { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -62,7 +68,7 @@ export default function Sidebar() {
                             }`
                         }
                     >
-                        <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
+                        <item.icon className="w-4 h-4 flex-shrink-0" />
                         {!collapsed && <span>{item.label}</span>}
                     </NavLink>
                 ))}
@@ -83,23 +89,38 @@ export default function Sidebar() {
                 </div>
             )}
 
-            {/* User / Logout */}
+            {/* User / Profile / Logout */}
             <div className="p-3 border-t border-hils-border">
-                <div className="flex items-center gap-3 px-2 py-2">
-                    <div className="w-8 h-8 rounded-full bg-hils-card border border-hils-border flex items-center justify-center flex-shrink-0">
-                        <User className="w-4 h-4 text-hils-text-dim" />
+                {/* Avatar row — clickable → goes to /profile */}
+                <button
+                    onClick={() => navigate('/profile')}
+                    className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-hils-card transition-colors group"
+                    title="View Profile"
+                >
+                    <div className="w-8 h-8 rounded-full bg-hils-card border border-hils-border flex items-center justify-center flex-shrink-0 group-hover:border-white/20 transition-colors">
+                        <span className="text-xs font-bold text-hils-text">{initials || '?'}</span>
                     </div>
                     {!collapsed && (
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-hils-text truncate">
-                                {user?.displayName ?? 'Student'}
-                            </p>
-                            <p className="text-xs text-hils-text-dim truncate">{user?.email}</p>
+                        <div className="flex-1 min-w-0 text-left">
+                            <p className="text-sm font-medium text-hils-text truncate">{displayName}</p>
+                            <p className="text-xs text-hils-text-dim truncate">{displayEmail}</p>
                         </div>
                     )}
+                </button>
+
+                {/* Settings + Logout row */}
+                <div className={`flex items-center mt-1 gap-1 ${collapsed ? 'flex-col' : ''}`}>
+                    <button
+                        onClick={() => navigate('/profile')}
+                        className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-text transition-colors text-xs"
+                        title="Profile & Settings"
+                    >
+                        <Settings className="w-3.5 h-3.5" />
+                        {!collapsed && <span>Settings</span>}
+                    </button>
                     <button
                         onClick={handleLogout}
-                        className="p-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-danger transition-colors"
+                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-danger transition-colors"
                         title="Sign Out"
                     >
                         <LogOut className="w-4 h-4" />

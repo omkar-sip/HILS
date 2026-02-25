@@ -1,216 +1,310 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-    BookOpen, ChevronRight, GraduationCap, Layers,
-    CheckCircle2, Circle, Folder
+    BookOpen, ChevronRight, Layers, CheckCircle2, Circle,
+    ArrowRight, Zap, GraduationCap, Bell, X, Sparkles
 } from 'lucide-react'
-import { cseSyllabus } from '@/shared/data/cseSyllabus'
+import { vtuSyllabus } from '@/shared/data/vtuSyllabus'
 import { useProgressStore } from '@/mcps/progress/store/useProgressStore'
+import { useAcademicProfileStore } from '@/mcps/academic-profile/store/useAcademicProfileStore'
+import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
+import { resolveAcademicNames, resolveSemesterData } from '@/shared/utils/resolveAcademicNames'
 
-type ViewLevel = 'semesters' | 'subjects' | 'modules' | 'topics'
+type ViewLevel = 'subjects' | 'modules' | 'topics'
 
+// ─── Setup Notification Popup ─────────────────────────────────────────────────
+function SetupNotification({ onDismiss, onSetup }: { onDismiss: () => void; onSetup: () => void }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-6 right-6 z-50 w-80 glass-card border border-white/10 p-4 shadow-2xl"
+        >
+            <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Bell className="w-4 h-4 text-hils-accent-light" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-hils-text mb-0.5">Create your academic profile</p>
+                    <p className="text-xs text-hils-text-muted leading-relaxed mb-3">
+                        Set up your University, Branch & Scheme to unlock your personalised syllabus.
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={onSetup}
+                            className="flex-1 py-1.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-white/90 transition-colors"
+                        >
+                            Set Up Now
+                        </button>
+                        <button
+                            onClick={onDismiss}
+                            className="py-1.5 px-3 rounded-lg border border-hils-border text-hils-text-muted text-xs hover:text-hils-text transition-colors"
+                        >
+                            Later
+                        </button>
+                    </div>
+                </div>
+                <button onClick={onDismiss} className="p-0.5 hover:bg-white/[0.06] rounded transition-colors flex-shrink-0">
+                    <X className="w-3.5 h-3.5 text-hils-text-dim" />
+                </button>
+            </div>
+        </motion.div>
+    )
+}
+
+// ─── Welcome Screen (no academic profile yet) ─────────────────────────────────
+function WelcomeScreen({ onSetup }: { onSetup: () => void }) {
+    const { user } = useAuthStore()
+    const firstName = user?.displayName?.split(' ')[0] ?? 'Student'
+
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
+            <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+            >
+                {/* Glow orb */}
+                <div className="relative w-20 h-20 mx-auto mb-8">
+                    <div className="absolute inset-0 rounded-full bg-white/5 blur-xl scale-150" />
+                    <div className="relative w-20 h-20 rounded-2xl bg-hils-surface border border-hils-border flex items-center justify-center">
+                        <Sparkles className="w-8 h-8 text-hils-text" />
+                    </div>
+                </div>
+
+                <h1 className="text-3xl font-bold text-hils-text mb-2">
+                    Welcome, {firstName} 👋
+                </h1>
+                <p className="text-hils-text-muted max-w-sm mx-auto mb-2 leading-relaxed">
+                    HILS helps you master your VTU syllabus with AI-powered explanations.
+                </p>
+                <p className="text-hils-text-dim text-sm mb-10">
+                    Start by setting up your academic profile — takes less than 30 seconds.
+                </p>
+
+                {/* Stats preview cards */}
+                <div className="flex items-center justify-center gap-3 mb-10">
+                    {[
+                        { label: 'Subjects', value: '8+' },
+                        { label: 'Modules', value: '40+' },
+                        { label: 'AI Modes', value: '4' },
+                    ].map(stat => (
+                        <div key={stat.label} className="glass-card px-5 py-3 text-center">
+                            <p className="text-xl font-bold text-hils-text">{stat.value}</p>
+                            <p className="text-xs text-hils-text-muted mt-0.5">{stat.label}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <button
+                    onClick={onSetup}
+                    className="btn-primary inline-flex items-center gap-2 text-sm px-6 py-3"
+                >
+                    <GraduationCap className="w-4 h-4" />
+                    Set Up Academic Profile
+                    <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <p className="text-xs text-hils-text-dim mt-4">
+                    You can always change this later from your profile settings.
+                </p>
+            </motion.div>
+        </div>
+    )
+}
+
+// ─── Main Dashboard ────────────────────────────────────────────────────────────
 export default function DashboardPage() {
     const navigate = useNavigate()
-    const { isTopicCompleted } = useProgressStore()
+    const { profile, isLoading: profileLoading } = useAcademicProfileStore()
+    const { isTopicCompleted, completedTopics } = useProgressStore()
 
-    const [currentSemester, setCurrentSemester] = useState<string | null>(null)
     const [currentSubject, setCurrentSubject] = useState<string | null>(null)
     const [currentModule, setCurrentModule] = useState<string | null>(null)
+    const [popupDismissed, setPopupDismissed] = useState(false)
 
-    const viewLevel: ViewLevel = currentModule
-        ? 'topics'
-        : currentSubject
-            ? 'modules'
-            : currentSemester
-                ? 'subjects'
-                : 'semesters'
+    const viewLevel: ViewLevel = currentModule ? 'topics' : currentSubject ? 'modules' : 'subjects'
+    const hasAcademicProfile = !!profile
+
+    // Show popup on each visit if no profile (not just dismissed once permanently)
+    const showPopup = !hasAcademicProfile && !profileLoading && !popupDismissed
+
+    // ── Resolve display names from IDs ────────────────────────────────────────
+    const names = useMemo(() => resolveAcademicNames(profile), [profile])
+    const currentSemData = useMemo(() => resolveSemesterData(profile), [profile])
+
+    // ── Last completed topic for "Continue" banner ────────────────────────────
+    const lastTopic = useMemo(() => {
+        const entries = Object.values(completedTopics).sort((a, b) => b.completedAt - a.completedAt)
+        const last = entries[0]
+        if (!last) return null
+        for (const branch of vtuSyllabus.branches) {
+            for (const semester of branch.semesters) {
+                for (const subject of semester.subjects) {
+                    for (const mod of subject.modules) {
+                        const tIdx = mod.topics.findIndex(tp => tp.id === last.topicId)
+                        if (tIdx !== -1) {
+                            const next = mod.topics[tIdx + 1]
+                            const target = next ?? mod.topics[tIdx]!
+                            return { subjectCode: subject.code, module: mod.name, topicName: target.name, topicId: target.id }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }, [completedTopics])
+
+    const activeSubject = currentSemData?.subjects.find(s => s.id === currentSubject)
+    const activeModule = activeSubject?.modules.find(m => m.id === currentModule)
 
     const breadcrumb = useMemo(() => {
         const items: { label: string; onClick: () => void }[] = [
-            { label: cseSyllabus.shortName, onClick: () => { setCurrentSemester(null); setCurrentSubject(null); setCurrentModule(null) } },
+            { label: `Sem ${profile?.semester ?? 3}`, onClick: () => { setCurrentSubject(null); setCurrentModule(null) } },
         ]
-        if (currentSemester) {
-            const sem = cseSyllabus.semesters.find((s) => s.id === currentSemester)
-            items.push({ label: `Semester ${sem?.number}`, onClick: () => { setCurrentSubject(null); setCurrentModule(null) } })
-        }
-        if (currentSubject) {
-            const sem = cseSyllabus.semesters.find((s) => s.id === currentSemester)
-            const sub = sem?.subjects.find((s) => s.id === currentSubject)
-            items.push({ label: sub?.code ?? '', onClick: () => setCurrentModule(null) })
-        }
-        if (currentModule) {
-            const sem = cseSyllabus.semesters.find((s) => s.id === currentSemester)
-            const sub = sem?.subjects.find((s) => s.id === currentSubject)
-            const mod = sub?.modules.find((m) => m.id === currentModule)
-            items.push({ label: mod?.name ?? '', onClick: () => { } })
-        }
+        if (activeSubject) items.push({ label: activeSubject.code, onClick: () => setCurrentModule(null) })
+        if (activeModule) items.push({ label: `Module ${activeModule.moduleNumber}`, onClick: () => { } })
         return items
-    }, [currentSemester, currentSubject, currentModule])
+    }, [profile, activeSubject, activeModule])
 
+    // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className="p-6 max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-hils-text mb-1">Dashboard</h1>
-                <p className="text-hils-text-muted text-sm">Navigate your syllabus</p>
-            </div>
+        <div className="relative">
+            {/* No-profile welcome screen */}
+            {!hasAcademicProfile && !profileLoading && (
+                <WelcomeScreen onSetup={() => navigate('/setup')} />
+            )}
 
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-1.5 mb-6 text-sm">
-                {breadcrumb.map((item, i) => (
-                    <span key={i} className="flex items-center gap-1.5">
-                        {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-hils-text-dim" />}
-                        <button
-                            onClick={item.onClick}
-                            className={`hover:text-hils-accent-light transition-colors ${i === breadcrumb.length - 1 ? 'text-hils-text font-medium' : 'text-hils-text-muted'
-                                }`}
-                        >
-                            {item.label}
-                        </button>
-                    </span>
-                ))}
-            </div>
+            {/* Academic profile exists — subject/module/topic grid */}
+            {hasAcademicProfile && (
+                <div className="p-6 max-w-6xl mx-auto">
 
-            {/* Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Semesters View */}
-                {viewLevel === 'semesters' &&
-                    cseSyllabus.semesters.map((semester, i) => (
-                        <motion.button
-                            key={semester.id}
-                            initial={{ opacity: 0, y: 10 }}
+                    {/* Continue banner */}
+                    {lastTopic && viewLevel === 'subjects' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.05 }}
-                            onClick={() => setCurrentSemester(semester.id)}
-                            className="glass-card-hover p-6 text-left group"
+                            className="mb-6 glass-card p-4 flex items-center justify-between gap-3 border border-white/10 group cursor-pointer"
+                            onClick={() => navigate(`/topic/${lastTopic.topicId}`)}
                         >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="p-2.5 rounded-xl bg-hils-accent/10">
-                                    <GraduationCap className="w-5 h-5 text-hils-accent-light" />
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="p-2 rounded-lg bg-white/[0.06] flex-shrink-0">
+                                    <Zap className="w-4 h-4 text-hils-accent-light" />
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-hils-text-dim group-hover:text-hils-accent-light transition-colors" />
+                                <div className="min-w-0">
+                                    <p className="text-xs text-hils-text-muted mb-0.5">Continue where you left off</p>
+                                    <p className="text-sm font-semibold text-hils-text truncate">{lastTopic.topicName}</p>
+                                    <p className="text-xs text-hils-text-dim truncate">{lastTopic.subjectCode} · {lastTopic.module}</p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-semibold text-hils-text mb-1">Semester {semester.number}</h3>
-                            <p className="text-sm text-hils-text-muted">{semester.subjects.length} subjects</p>
-                        </motion.button>
-                    ))}
+                            <ArrowRight className="w-4 h-4 text-hils-text-dim group-hover:text-hils-accent-light transition-colors flex-shrink-0" />
+                        </motion.div>
+                    )}
 
-                {/* Subjects View */}
-                {viewLevel === 'subjects' &&
-                    cseSyllabus.semesters
-                        .find((s) => s.id === currentSemester)
-                        ?.subjects.map((subject, i) => {
+                    {/* Header */}
+                    <div className="mb-6">
+                        {viewLevel === 'subjects' && (
+                            <div className="mb-2">
+                                <h1 className="text-2xl font-bold text-hils-text">{names.branchName}</h1>
+                                <p className="text-sm text-hils-text-muted mt-0.5">{names.universityShortName} · {names.schemeName} · Semester {profile?.semester}</p>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-1.5 text-sm">
+                            {breadcrumb.map((item, i) => (
+                                <span key={i} className="flex items-center gap-1.5">
+                                    {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-hils-text-dim" />}
+                                    <button onClick={item.onClick} className={`hover:text-hils-accent-light transition-colors ${i === breadcrumb.length - 1 ? 'text-hils-text font-medium' : 'text-hils-text-muted'}`}>
+                                        {item.label}
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {/* Subjects */}
+                        {viewLevel === 'subjects' && currentSemData?.subjects.map((subject, i) => {
                             const totalTopics = subject.modules.reduce((acc, m) => acc + m.topics.length, 0)
-                            const completedTopics = subject.modules.reduce(
-                                (acc, m) => acc + m.topics.filter((t) => isTopicCompleted(t.id)).length,
-                                0
-                            )
-                            const progress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0
-
+                            const done = subject.modules.reduce((acc, m) => acc + m.topics.filter(t => isTopicCompleted(t.id)).length, 0)
+                            const pct = totalTopics > 0 ? Math.round((done / totalTopics) * 100) : 0
                             return (
-                                <motion.button
-                                    key={subject.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    onClick={() => setCurrentSubject(subject.id)}
-                                    className="glass-card-hover p-6 text-left group"
-                                >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="p-2.5 rounded-xl bg-hils-accent/10">
-                                            <BookOpen className="w-5 h-5 text-hils-accent-light" />
+                                <motion.button key={subject.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                                    onClick={() => setCurrentSubject(subject.id)} className="glass-card-hover p-5 text-left group">
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className="p-2 rounded-lg bg-hils-accent/10"><BookOpen className="w-4 h-4 text-hils-accent-light" /></div>
+                                        <div className="flex items-center gap-1.5">
+                                            {subject.isElective && <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-hils-text-dim border border-hils-border">Elective</span>}
+                                            {subject.isLab && <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-hils-text-dim border border-hils-border">Lab</span>}
+                                            <span className="badge">{subject.code}</span>
                                         </div>
-                                        <span className="badge">{subject.code}</span>
                                     </div>
-                                    <h3 className="text-base font-semibold text-hils-text mb-1">{subject.name}</h3>
-                                    <p className="text-sm text-hils-text-muted mb-3">{subject.modules.length} modules · {totalTopics} topics</p>
-                                    {/* Progress bar */}
-                                    <div className="w-full h-1.5 bg-hils-border rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-hils-success rounded-full transition-all duration-500"
-                                            style={{ width: `${progress}%` }}
-                                        />
+                                    <h3 className="text-sm font-semibold text-hils-text mb-0.5 leading-snug">{subject.name}</h3>
+                                    <p className="text-xs text-hils-text-muted mb-3">{subject.credits} credits · {subject.modules.length} modules · {totalTopics} topics</p>
+                                    <div className="w-full h-1 bg-hils-border rounded-full overflow-hidden">
+                                        <div className="h-full bg-hils-success rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                                     </div>
-                                    <p className="text-xs text-hils-text-dim mt-1.5">{progress}% complete</p>
+                                    <p className="text-[10px] text-hils-text-dim mt-1">{pct}% complete</p>
                                 </motion.button>
                             )
                         })}
 
-                {/* Modules View */}
-                {viewLevel === 'modules' &&
-                    cseSyllabus.semesters
-                        .find((s) => s.id === currentSemester)
-                        ?.subjects.find((s) => s.id === currentSubject)
-                        ?.modules.map((mod, i) => {
-                            const completed = mod.topics.filter((t) => isTopicCompleted(t.id)).length
-
+                        {/* Modules */}
+                        {viewLevel === 'modules' && activeSubject?.modules.map((mod, i) => {
+                            const done = mod.topics.filter(t => isTopicCompleted(t.id)).length
                             return (
-                                <motion.button
-                                    key={mod.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    onClick={() => setCurrentModule(mod.id)}
-                                    className="glass-card-hover p-6 text-left group"
-                                >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="p-2.5 rounded-xl bg-hils-accent/10">
-                                            <Layers className="w-5 h-5 text-hils-accent-light" />
-                                        </div>
-                                        <span className="text-xs text-hils-text-dim">
-                                            {completed}/{mod.topics.length}
-                                        </span>
+                                <motion.button key={mod.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                                    onClick={() => setCurrentModule(mod.id)} className="glass-card-hover p-5 text-left group">
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className="p-2 rounded-lg bg-hils-accent/10"><Layers className="w-4 h-4 text-hils-accent-light" /></div>
+                                        <span className="text-xs text-hils-text-dim">{done}/{mod.topics.length}</span>
                                     </div>
-                                    <h3 className="text-base font-semibold text-hils-text mb-1">Module {mod.order}: {mod.name}</h3>
-                                    <p className="text-sm text-hils-text-muted">{mod.topics.length} topics</p>
+                                    <p className="text-[10px] text-hils-text-dim mb-0.5 uppercase tracking-wider font-medium">Module {mod.moduleNumber}</p>
+                                    <h3 className="text-sm font-semibold text-hils-text mb-1">{mod.name}</h3>
+                                    <p className="text-xs text-hils-text-muted">{mod.topics.length} topics</p>
                                 </motion.button>
                             )
                         })}
 
-                {/* Topics View */}
-                {viewLevel === 'topics' &&
-                    cseSyllabus.semesters
-                        .find((s) => s.id === currentSemester)
-                        ?.subjects.find((s) => s.id === currentSubject)
-                        ?.modules.find((m) => m.id === currentModule)
-                        ?.topics.map((topic, i) => {
-                            const completed = isTopicCompleted(topic.id)
-
+                        {/* Topics */}
+                        {viewLevel === 'topics' && activeModule?.topics.map((topic, i) => {
+                            const done = isTopicCompleted(topic.id)
                             return (
-                                <motion.button
-                                    key={topic.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    onClick={() => navigate(`/topic/${topic.id}`)}
-                                    className="glass-card-hover p-5 text-left group"
-                                >
+                                <motion.button key={topic.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                                    onClick={() => navigate(`/topic/${topic.id}`)} className="glass-card-hover p-4 text-left group">
                                     <div className="flex items-start gap-3">
-                                        {completed ? (
-                                            <CheckCircle2 className="w-5 h-5 text-hils-success mt-0.5 flex-shrink-0" />
-                                        ) : (
-                                            <Circle className="w-5 h-5 text-hils-text-dim mt-0.5 flex-shrink-0" />
-                                        )}
+                                        {done ? <CheckCircle2 className="w-4 h-4 text-hils-success mt-0.5 flex-shrink-0" /> : <Circle className="w-4 h-4 text-hils-text-dim mt-0.5 flex-shrink-0" />}
                                         <div>
-                                            <h3 className="text-sm font-semibold text-hils-text mb-1">{topic.name}</h3>
-                                            {topic.description && (
-                                                <p className="text-xs text-hils-text-muted">{topic.description}</p>
-                                            )}
+                                            <h3 className="text-sm font-semibold text-hils-text mb-0.5">{topic.name}</h3>
+                                            {topic.description && <p className="text-xs text-hils-text-muted leading-relaxed">{topic.description}</p>}
                                         </div>
                                     </div>
                                 </motion.button>
                             )
                         })}
-            </div>
+                    </div>
 
-            {/* Empty state */}
-            {viewLevel === 'semesters' && cseSyllabus.semesters.length === 0 && (
-                <div className="text-center py-20">
-                    <Folder className="w-12 h-12 text-hils-text-dim mx-auto mb-4" />
-                    <p className="text-hils-text-muted">No semesters available</p>
+                    {!currentSemData && (
+                        <div className="text-center py-20">
+                            <GraduationCap className="w-12 h-12 text-hils-text-dim mx-auto mb-4" />
+                            <p className="text-hils-text-muted">No subjects found. Use the semester switcher to change semester.</p>
+                        </div>
+                    )}
                 </div>
             )}
+
+            {/* Notification popup */}
+            <AnimatePresence>
+                {showPopup && (
+                    <SetupNotification
+                        onDismiss={() => setPopupDismissed(true)}
+                        onSetup={() => navigate('/setup')}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     )
 }

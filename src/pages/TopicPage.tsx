@@ -5,7 +5,7 @@ import {
     ArrowLeft, ArrowRight, BookOpen, Brain, FileText,
     Telescope, CheckCircle2, Loader2, AlertTriangle
 } from 'lucide-react'
-import { cseSyllabus } from '@/shared/data/cseSyllabus'
+import { vtuSyllabus } from '@/shared/data/vtuSyllabus'
 import { useAIStore } from '@/mcps/ai-engine/store/useAIStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
 import { useProgressStore } from '@/mcps/progress/store/useProgressStore'
@@ -24,29 +24,31 @@ export default function TopicPage() {
     const { topicId } = useParams<{ topicId: string }>()
     const navigate = useNavigate()
 
-    const { activeMode, setMode, response, isLoading, error, setTopic } = useAIStore()
+    const { activeMode, setMode, response, isLoading, error, setTopic, generateExplanation } = useAIStore()
     const { activePersona } = usePersonaStore()
     const { isTopicCompleted, markComplete } = useProgressStore()
 
-    // Find topic in syllabus tree
+    // Find topic in VTU syllabus tree (branches → semesters → subjects → modules → topics)
     const topicContext = useMemo(() => {
-        for (const semester of cseSyllabus.semesters) {
-            for (const subject of semester.subjects) {
-                for (const mod of subject.modules) {
-                    const topicIndex = mod.topics.findIndex((t) => t.id === topicId)
-                    if (topicIndex !== -1) {
-                        const topic = mod.topics[topicIndex]!
-                        const prevTopic = mod.topics[topicIndex - 1] ?? null
-                        const nextTopic = mod.topics[topicIndex + 1] ?? null
-                        return {
-                            topic,
-                            module: mod,
-                            subject,
-                            semester,
-                            prevTopic,
-                            nextTopic,
-                            totalInModule: mod.topics.length,
-                            positionInModule: topicIndex + 1,
+        for (const branch of vtuSyllabus.branches) {
+            for (const semester of branch.semesters) {
+                for (const subject of semester.subjects) {
+                    for (const mod of subject.modules) {
+                        const topicIndex = mod.topics.findIndex((t) => t.id === topicId)
+                        if (topicIndex !== -1) {
+                            const topic = mod.topics[topicIndex]!
+                            const prevTopic = mod.topics[topicIndex - 1] ?? null
+                            const nextTopic = mod.topics[topicIndex + 1] ?? null
+                            return {
+                                topic,
+                                module: mod,
+                                subject,
+                                semester,
+                                prevTopic,
+                                nextTopic,
+                                totalInModule: mod.topics.length,
+                                positionInModule: topicIndex + 1,
+                            }
                         }
                     }
                 }
@@ -86,7 +88,7 @@ export default function TopicPage() {
             {/* Breadcrumb */}
             <div className="flex items-center gap-1.5 mb-6 text-xs text-hils-text-muted">
                 <button onClick={() => navigate('/dashboard')} className="hover:text-hils-accent-light transition-colors">
-                    {cseSyllabus.shortName}
+                    VTU
                 </button>
                 <span>/</span>
                 <span>Sem {semester.number}</span>
@@ -138,10 +140,10 @@ export default function TopicPage() {
                         <button
                             key={mode}
                             onClick={() => setMode(mode)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all duration-150
                 ${activeMode === mode
-                                    ? 'bg-hils-accent text-white shadow-md'
-                                    : 'text-hils-text-muted hover:text-hils-text'
+                                    ? 'bg-transparent border border-[#9ca3af] text-white font-semibold'
+                                    : 'bg-transparent border border-transparent text-hils-text-muted hover:bg-white/[0.04] hover:text-hils-text font-medium'
                                 }`}
                         >
                             <Icon className="w-3.5 h-3.5" />
@@ -180,8 +182,25 @@ export default function TopicPage() {
                         <button
                             className="btn-primary"
                             disabled={isLoading}
+                            onClick={() => {
+                                if (!topicContext) return
+                                const { topic, subject, module: mod } = topicContext
+                                generateExplanation({
+                                    topicId: topic.id,
+                                    topicName: topic.name,
+                                    subjectName: subject.name,
+                                    moduleName: mod.name,
+                                    personaId: activePersona.id,
+                                    personaModifier: activePersona.promptModifier,
+                                    mode: activeMode,
+                                    syllabusContext: topic.description,
+                                })
+                            }}
                         >
-                            Generate Explanation
+                            {activeMode === 'quiz' ? 'Generate Quiz'
+                                : activeMode === 'summary' ? 'Generate Summary'
+                                    : activeMode === 'deep-dive' ? 'Generate Deep Dive'
+                                        : 'Generate Explanation'}
                         </button>
                     </div>
                 )}

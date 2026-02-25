@@ -1,5 +1,7 @@
 // ─── Auth Types ───
 
+import type { AcademicProfile } from '@/shared/types/syllabus.types'
+
 export type AuthProvider = 'email' | 'google'
 
 export interface AuthUser {
@@ -9,6 +11,7 @@ export interface AuthUser {
     photoURL: string | null
     emailVerified: boolean
     provider: AuthProvider
+    academicProfile?: AcademicProfile | null
 }
 
 export interface AuthState {

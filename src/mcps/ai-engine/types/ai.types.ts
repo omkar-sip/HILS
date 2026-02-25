@@ -24,6 +24,7 @@ export interface AIRequestPayload {
     subjectName: string
     moduleName: string
     personaId: string
+    personaModifier?: string
     mode: LearningMode
     syllabusContext?: string
 }
