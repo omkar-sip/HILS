@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-    LayoutDashboard, BookOpen, LogOut, Sparkles,
+    LayoutDashboard, LogOut, Sparkles,
     ChevronLeft, User
 } from 'lucide-react'
 import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
@@ -34,8 +34,8 @@ export default function Sidebar() {
             <div className="p-4 flex items-center justify-between border-b border-hils-border">
                 {!collapsed && (
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-hils-accent rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                            <Sparkles className="w-4 h-4 text-black" />
                         </div>
                         <span className="text-sm font-bold text-hils-text tracking-tight">HILS</span>
                     </div>
@@ -57,7 +57,7 @@ export default function Sidebar() {
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
               ${isActive
-                                ? 'bg-hils-accent/10 text-hils-accent-light border border-hils-accent/20'
+                                ? 'bg-white/[0.08] text-white border border-white/[0.12]'
                                 : 'text-hils-text-muted hover:text-hils-text hover:bg-hils-card border border-transparent'
                             }`
                         }

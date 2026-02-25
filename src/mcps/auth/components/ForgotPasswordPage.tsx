@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
             <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
                 {/* Subtle radial glow */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-[500px] h-[500px] bg-hils-accent/[0.06] rounded-full blur-[120px]" />
+                    <div className="w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[120px]" />
                 </div>
 
                 {/* HILS branding */}
@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
                     to="/"
                     className="absolute top-6 left-6 flex items-center gap-2 group z-10"
                 >
-                    <div className="w-8 h-8 bg-hils-accent rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-hils-accent/20 transition-all">
-                        <Sparkles className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-white/10 transition-all">
+                        <Sparkles className="w-4 h-4 text-black" />
                     </div>
                     <span className="text-base font-bold tracking-tight text-white">
                         HILS
@@ -53,8 +53,8 @@ export default function ForgotPasswordPage() {
 
                 {/* Illustration */}
                 <div className="relative flex flex-col items-center text-center px-12">
-                    <div className="w-24 h-24 bg-hils-accent/10 rounded-3xl flex items-center justify-center mb-8">
-                        <Mail className="w-12 h-12 text-hils-accent-light" />
+                    <div className="w-24 h-24 bg-white/[0.06] rounded-3xl flex items-center justify-center mb-8">
+                        <Mail className="w-12 h-12 text-[#CFCFCF]" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-3">Reset Your Password</h2>
                     <p className="text-hils-text-muted max-w-sm">
@@ -86,8 +86,8 @@ export default function ForgotPasswordPage() {
                     >
                         {/* Mobile branding */}
                         <div className="lg:hidden flex items-center gap-2 mb-6">
-                            <div className="w-9 h-9 bg-hils-accent rounded-lg flex items-center justify-center">
-                                <Sparkles className="w-4 h-4 text-white" />
+                            <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
+                                <Sparkles className="w-4 h-4 text-black" />
                             </div>
                             <span className="text-lg font-bold tracking-tight text-white">HILS</span>
                         </div>

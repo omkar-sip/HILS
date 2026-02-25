@@ -10,15 +10,15 @@ export default {
             colors: {
                 hils: {
                     bg: '#000000',
-                    surface: '#0a0a0a',
+                    surface: '#0B0B0B',
                     card: '#111111',
-                    border: '#1e1e1e',
-                    accent: '#7c3aed',
-                    'accent-light': '#a78bfa',
-                    'accent-glow': 'rgba(124, 58, 237, 0.15)',
+                    border: 'rgba(255,255,255,0.08)',
+                    accent: '#FFFFFF',
+                    'accent-light': '#CFCFCF',
+                    'accent-glow': 'rgba(255, 255, 255, 0.06)',
                     text: '#ffffff',
-                    'text-muted': '#999999',
-                    'text-dim': '#555555',
+                    'text-muted': '#8A8A8A',
+                    'text-dim': '#5A5A5A',
                     success: '#22c55e',
                     warning: '#eab308',
                     danger: '#ef4444',
@@ -35,7 +35,7 @@ export default {
                 'fade-in': 'fadeIn 0.25s ease-out',
                 'slide-up': 'slideUp 0.25s ease-out',
                 'slide-right': 'slideRight 0.25s ease-out',
-                'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                'glow-pulse': 'glowPulse 3s ease-in-out infinite',
             },
             keyframes: {
                 fadeIn: {
@@ -51,8 +51,8 @@ export default {
                     '100%': { opacity: '1', transform: 'translateX(0)' },
                 },
                 glowPulse: {
-                    '0%, 100%': { boxShadow: '0 0 5px rgba(124, 58, 237, 0.2)' },
-                    '50%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.4)' },
+                    '0%, 100%': { boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.06)' },
+                    '50%': { boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.12)' },
                 },
             },
         },

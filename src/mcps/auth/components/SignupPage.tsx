@@ -35,8 +35,8 @@ export default function SignupPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-hils-bg relative overflow-hidden">
-            <div className="absolute top-1/4 -left-32 w-96 h-96 bg-hils-accent/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-hils-accent/5 rounded-full blur-3xl" />
+            <div className="absolute top-1/4 -left-32 w-96 h-96 bg-white/[0.03] rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-white/[0.02] rounded-full blur-3xl" />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -51,8 +51,8 @@ export default function SignupPage() {
                         transition={{ duration: 0.3 }}
                         className="inline-flex items-center gap-2 mb-4"
                     >
-                        <div className="w-10 h-10 bg-hils-accent rounded-xl flex items-center justify-center">
-                            <Sparkles className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                            <Sparkles className="w-5 h-5 text-black" />
                         </div>
                         <h1 className="text-2xl font-bold text-hils-text tracking-tight">HILS</h1>
                     </motion.div>
@@ -166,7 +166,7 @@ export default function SignupPage() {
 
                     <div className="mt-6 text-center">
                         <span className="text-hils-text-dim text-sm">Already have an account? </span>
-                        <Link to="/login" className="text-hils-accent-light text-sm font-medium hover:underline">
+                        <Link to="/login" className="text-white text-sm font-medium hover:underline">
                             Sign in
                         </Link>
                     </div>

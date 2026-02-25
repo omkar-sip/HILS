@@ -16,8 +16,8 @@ function TabletDashboard() {
                     <p className="text-[9px] text-gray-500 uppercase tracking-wider">Subject</p>
                     <h3 className="text-xs sm:text-sm font-bold">Basic Electrical Engineering</h3>
                 </div>
-                <div className="px-2 py-0.5 rounded-full bg-violet-600/20 border border-violet-500/30">
-                    <span className="text-[9px] font-semibold text-violet-400">Exam Mode</span>
+                <div className="px-2 py-0.5 rounded-full bg-white/[0.08] border border-white/[0.12]">
+                    <span className="text-[9px] font-semibold text-[#CFCFCF]">Exam Mode</span>
                 </div>
             </div>
 
@@ -37,18 +37,18 @@ function TabletDashboard() {
                             className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] ${mod.status === 'done'
                                 ? 'bg-emerald-500/10 border border-emerald-500/20'
                                 : mod.status === 'progress'
-                                    ? 'bg-violet-500/10 border border-violet-500/20'
+                                    ? 'bg-white/[0.06] border border-white/[0.1]'
                                     : 'bg-white/[0.03] border border-white/[0.06]'
                                 }`}
                         >
                             {mod.status === 'done' ? (
                                 <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
                             ) : mod.status === 'progress' ? (
-                                <Clock className="w-3 h-3 text-violet-400 flex-shrink-0" />
+                                <Clock className="w-3 h-3 text-gray-400 flex-shrink-0" />
                             ) : (
                                 <Circle className="w-3 h-3 text-gray-600 flex-shrink-0" />
                             )}
-                            <span className={mod.status === 'done' ? 'text-emerald-300' : mod.status === 'progress' ? 'text-violet-300' : 'text-gray-500'}>
+                            <span className={mod.status === 'done' ? 'text-emerald-300' : mod.status === 'progress' ? 'text-gray-300' : 'text-gray-500'}>
                                 {mod.name}
                             </span>
                             {mod.status === 'done' && <span className="ml-auto text-[8px] text-emerald-500">✓</span>}
@@ -73,7 +73,7 @@ function TabletDashboard() {
                                 />
                                 <defs>
                                     <linearGradient id="prog-g" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#7c3aed" />
+                                        <stop offset="0%" stopColor="#ffffff" />
                                         <stop offset="100%" stopColor="#22c55e" />
                                     </linearGradient>
                                 </defs>
@@ -87,29 +87,29 @@ function TabletDashboard() {
 
                     <div className="px-1.5 py-1 rounded-md bg-white/[0.03] border border-white/[0.06]">
                         <div className="flex items-center gap-1 mb-0.5">
-                            <TrendingUp className="w-2.5 h-2.5 text-violet-400" />
+                            <TrendingUp className="w-2.5 h-2.5 text-gray-400" />
                             <span className="text-[8px] text-gray-400">Confidence</span>
                         </div>
                         <div className="flex gap-0.5">
                             {[1, 2, 3, 4, 5].map((i) => (
                                 <div
                                     key={i}
-                                    className={`h-1 flex-1 rounded-full ${i <= 3 ? 'bg-violet-500' : i === 4 ? 'bg-violet-500/40' : 'bg-white/10'
+                                    className={`h-1 flex-1 rounded-full ${i <= 3 ? 'bg-white/40' : i === 4 ? 'bg-white/20' : 'bg-white/10'
                                         }`}
                                 />
                             ))}
                         </div>
-                        <span className="text-[8px] text-violet-400 block">Medium → High</span>
+                        <span className="text-[8px] text-gray-400 block">Medium → High</span>
                     </div>
                 </div>
             </div>
 
             {/* Bottom persona bar */}
             <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded bg-violet-600/30 flex items-center justify-center text-[8px]">🎯</div>
+                <div className="w-4 h-4 rounded bg-white/[0.08] flex items-center justify-center text-[8px]">🎯</div>
                 <div>
                     <p className="text-[8px] text-gray-500">Active Persona</p>
-                    <p className="text-[9px] font-semibold text-violet-300">Strict IIT Mentor — Exam Mode</p>
+                    <p className="text-[9px] font-semibold text-gray-300">Strict IIT Mentor — Exam Mode</p>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@ export default function TabletScrollSection() {
         <section ref={sectionRef} className="relative py-16 sm:py-20 overflow-hidden">
             {/* Background glow */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-violet-600/[0.05] rounded-full blur-[120px]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-white/[0.03] rounded-full blur-[120px]" />
             </div>
 
             <div className="max-w-5xl mx-auto px-6 relative">
@@ -149,7 +149,7 @@ export default function TabletScrollSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-40px' }}
                         transition={{ duration: 0.5 }}
-                        className="text-violet-400 text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4"
+                        className="text-gray-400 text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4"
                     >
                         Your Exam Buddy When Panic Hits
                     </motion.p>
@@ -163,7 +163,7 @@ export default function TabletScrollSection() {
                         className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4"
                     >
                         Studying One Night<br />
-                        <span className="bg-gradient-to-r from-violet-400 to-violet-300 bg-clip-text text-transparent">
+                        <span className="text-white">
                             Before the Exam?
                         </span>
                     </motion.h2>
@@ -201,7 +201,7 @@ export default function TabletScrollSection() {
                                 boxShadow: `
                                     0 0 0 1px rgba(255,255,255,0.04),
                                     0 20px 40px -10px rgba(0,0,0,0.7),
-                                    0 0 60px rgba(124,58,237,0.07),
+                                    0 0 60px rgba(255,255,255,0.03),
                                     inset 0 1px 0 rgba(255,255,255,0.05)
                                 `,
                             }}
@@ -221,7 +221,7 @@ export default function TabletScrollSection() {
                     {/* Shadow underneath */}
                     <div
                         className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2/3 h-6 rounded-full blur-xl"
-                        style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.12), transparent)' }}
+                        style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.06), transparent)' }}
                     />
                 </motion.div>
 
@@ -245,7 +245,7 @@ export default function TabletScrollSection() {
                         className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-5"
                     >
                         Stop Guessing.{' '}
-                        <span className="bg-gradient-to-r from-violet-400 to-emerald-400 bg-clip-text text-transparent">
+                        <span className="text-white">
                             Start Checking.
                         </span>
                     </motion.h3>
@@ -258,7 +258,7 @@ export default function TabletScrollSection() {
                     >
                         <Link
                             to="/login"
-                            className="group inline-flex items-center gap-2 px-7 py-3 bg-white text-black font-semibold rounded-xl transition-all duration-200 hover:shadow-[0_0_25px_rgba(124,58,237,0.25)] hover:scale-[1.02] active:scale-[0.98]"
+                            className="group inline-flex items-center gap-2 px-7 py-3 bg-white text-black font-semibold rounded-xl transition-all duration-200 hover:shadow-[0_0_25px_rgba(255,255,255,0.12)] hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <Rocket className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                             Login & Start Preparing

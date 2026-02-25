@@ -65,7 +65,7 @@ function RotateWords() {
                         y: -18,
                         transition: { duration: 0.25, ease: 'easeIn' },
                     }}
-                    className="inline-block bg-gradient-to-r from-hils-accent to-violet-400 bg-clip-text text-transparent"
+                    className="inline-block text-white"
                 >
                     {ROTATING_PHRASES[index]}
                 </motion.span>
@@ -92,8 +92,8 @@ export default function LandingPage() {
             <nav className="fixed top-0 left-0 right-0 z-50 bg-hils-bg/60 backdrop-blur-xl border-b border-hils-border/50">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 bg-hils-accent rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-hils-accent/20 transition-all">
-                            <Sparkles className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-white/10 transition-all">
+                            <Sparkles className="w-4 h-4 text-black" />
                         </div>
                         <span className="text-lg font-bold tracking-tight">HILS</span>
                     </Link>
@@ -147,9 +147,9 @@ export default function LandingPage() {
             {/* ═══════════════════════════════════════════ */}
             <section className="relative min-h-screen flex items-center pt-16">
                 <ParticleBackground />
-                <div className="absolute inset-0 bg-gradient-to-b from-hils-accent/5 via-transparent to-hils-bg pointer-events-none" />
-                <div className="absolute top-32 left-1/4 w-[500px] h-[500px] bg-hils-accent/[0.08] rounded-full blur-[120px] pointer-events-none" />
-                <div className="absolute bottom-32 right-1/4 w-[400px] h-[400px] bg-violet-600/5 rounded-full blur-[100px] pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] via-transparent to-hils-bg pointer-events-none" />
+                <div className="absolute top-32 left-1/4 w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute bottom-32 right-1/4 w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none" />
 
                 <div className="relative max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center w-full">
                     <div>
@@ -158,14 +158,14 @@ export default function LandingPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7 }}
                         >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hils-accent/10 border border-hils-accent/20 mb-6">
-                                <Zap className="w-3.5 h-3.5 text-hils-accent-light" />
-                                <span className="text-xs font-medium text-hils-accent-light">AI-Powered Learning</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] mb-6">
+                                <Zap className="w-3.5 h-3.5 text-[#CFCFCF]" />
+                                <span className="text-xs font-medium text-[#CFCFCF]">AI-Powered Learning</span>
                             </div>
 
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
                                 Master Your University{' '}
-                                <span className="bg-gradient-to-r from-hils-accent to-violet-400 bg-clip-text text-transparent">
+                                <span className="text-white">
                                     Concepts with AI
                                 </span>
                             </h1>
@@ -207,7 +207,7 @@ export default function LandingPage() {
                             </div>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="text-lg">🎓</span>
-                                <span className="text-sm font-medium text-hils-accent-light">Prof. Clarity</span>
+                                <span className="text-sm font-medium text-[#CFCFCF]">Prof. Clarity</span>
                                 <span className="badge ml-auto">Explain Mode</span>
                             </div>
                             <h3 className="text-sm font-semibold mb-2">Binary Search Trees</h3>
@@ -219,7 +219,7 @@ export default function LandingPage() {
                             <div className="grid grid-cols-2 gap-2 mt-4">
                                 {['Explanation', 'Analogy', 'Example', 'Summary'].map((s) => (
                                     <div key={s} className="px-3 py-2 rounded-lg bg-hils-surface/60 border border-hils-border/30">
-                                        <p className="text-[10px] text-hils-accent-light font-semibold uppercase tracking-wider">{s}</p>
+                                        <p className="text-[10px] text-[#CFCFCF] font-semibold uppercase tracking-wider">{s}</p>
                                         <div className="h-1.5 bg-hils-border/30 rounded mt-1.5 w-3/4" />
                                     </div>
                                 ))}
@@ -294,16 +294,16 @@ export default function LandingPage() {
             {/* 4 SOLUTION - WHAT IS HILS?                  */}
             {/* ═══════════════════════════════════════════ */}
             <section ref={featuresRef} className="py-24 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-hils-accent/[0.02] to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-transparent pointer-events-none" />
                 <div className="max-w-7xl mx-auto px-6 relative">
                     <FadeIn className="text-center mb-16">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hils-accent/10 border border-hils-accent/20 mb-4">
-                            <Cpu className="w-3.5 h-3.5 text-hils-accent-light" />
-                            <span className="text-xs font-medium text-hils-accent-light">The Solution</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] mb-4">
+                            <Cpu className="w-3.5 h-3.5 text-[#CFCFCF]" />
+                            <span className="text-xs font-medium text-[#CFCFCF]">The Solution</span>
                         </div>
                         <h2 className="text-3xl sm:text-4xl font-bold mb-4">
                             An AI Academic{' '}
-                            <span className="bg-gradient-to-r from-hils-accent to-violet-400 bg-clip-text text-transparent">
+                            <span className="text-white">
                                 Operating System.
                             </span>
                         </h2>
@@ -314,7 +314,7 @@ export default function LandingPage() {
 
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {[
-                            { icon: Users, title: 'Persona-Based Teaching', desc: '5 unique AI teaching styles — from academic professor to exam strategist.', color: 'text-violet-400', bg: 'bg-violet-400/10' },
+                            { icon: Users, title: 'Persona-Based Teaching', desc: '5 unique AI teaching styles — from academic professor to exam strategist.', color: 'text-white', bg: 'bg-white/[0.06]' },
                             { icon: Layers, title: 'Mode Switching', desc: 'Switch between Concept, Exam Prep, Deep Dive, and Summary modes instantly.', color: 'text-blue-400', bg: 'bg-blue-400/10' },
                             { icon: BookMarked, title: 'Syllabus Navigation', desc: 'Organized by University, Semester, Subject, Module, and Topic.', color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
                             { icon: Lightbulb, title: 'Real-world Analogies', desc: 'Every concept comes with relatable analogies that make it click.', color: 'text-amber-400', bg: 'bg-amber-400/10' },
@@ -346,7 +346,7 @@ export default function LandingPage() {
                     </FadeIn>
 
                     <div className="grid md:grid-cols-3 gap-8 relative">
-                        <div className="hidden md:block absolute top-12 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-hils-accent/0 via-hils-accent/30 to-hils-accent/0" />
+                        <div className="hidden md:block absolute top-12 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-white/0 via-white/[0.12] to-white/0" />
 
                         {[
                             { step: '01', icon: Library, title: 'Select Your Subject', desc: 'Browse your university syllabus. Pick a semester, subject, and topic.' },
@@ -355,10 +355,10 @@ export default function LandingPage() {
                         ].map((s, i) => (
                             <FadeIn key={s.step} delay={i * 0.15} className="relative">
                                 <div className="text-center">
-                                    <div className="mx-auto w-16 h-16 rounded-2xl bg-hils-accent/10 border border-hils-accent/20 flex items-center justify-center mb-5 relative z-10">
-                                        <s.icon className="w-7 h-7 text-hils-accent-light" />
+                                    <div className="mx-auto w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/[0.1] flex items-center justify-center mb-5 relative z-10">
+                                        <s.icon className="w-7 h-7 text-[#CFCFCF]" />
                                     </div>
-                                    <div className="text-xs font-bold text-hils-accent-light tracking-widest mb-2">STEP {s.step}</div>
+                                    <div className="text-xs font-bold text-[#CFCFCF] tracking-widest mb-2">STEP {s.step}</div>
                                     <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
                                     <p className="text-sm text-hils-text-muted leading-relaxed max-w-xs mx-auto">{s.desc}</p>
                                 </div>
@@ -372,7 +372,7 @@ export default function LandingPage() {
             {/* 6 DEEP FEATURE HIGHLIGHT                    */}
             {/* ═══════════════════════════════════════════ */}
             <section className="py-24 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-hils-accent/[0.02] to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-transparent pointer-events-none" />
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <FadeIn>
@@ -389,7 +389,7 @@ export default function LandingPage() {
                                         <div
                                             key={p.name}
                                             className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${p.active
-                                                ? 'bg-hils-accent/10 border border-hils-accent/30 shadow-sm shadow-hils-accent/10'
+                                                ? 'bg-white/[0.06] border border-white/[0.12] shadow-sm shadow-white/[0.04]'
                                                 : 'border border-transparent hover:bg-hils-surface/50'
                                                 }`}
                                         >
@@ -406,14 +406,14 @@ export default function LandingPage() {
                         </FadeIn>
 
                         <FadeIn delay={0.2}>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hils-accent/10 border border-hils-accent/20 mb-4">
-                                <Users className="w-3.5 h-3.5 text-hils-accent-light" />
-                                <span className="text-xs font-medium text-hils-accent-light">Persona-Driven AI</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] mb-4">
+                                <Users className="w-3.5 h-3.5 text-[#CFCFCF]" />
+                                <span className="text-xs font-medium text-[#CFCFCF]">Persona-Driven AI</span>
                             </div>
 
                             <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
                                 Same Topic.{' '}
-                                <span className="bg-gradient-to-r from-hils-accent to-violet-400 bg-clip-text text-transparent">
+                                <span className="text-white">
                                     Different Voice.
                                 </span>
                             </h2>
@@ -425,7 +425,7 @@ export default function LandingPage() {
                                     { quote: 'Make it exam-ready.', persona: 'Exam Ace' },
                                 ].map((q) => (
                                     <div key={q.persona} className="flex items-start gap-3">
-                                        <ChevronRight className="w-4 h-4 text-hils-accent-light mt-1 flex-shrink-0" />
+                                        <ChevronRight className="w-4 h-4 text-[#CFCFCF] mt-1 flex-shrink-0" />
                                         <div>
                                             <p className="text-base font-medium italic text-hils-text">&ldquo;{q.quote}&rdquo;</p>
                                             <p className="text-xs text-hils-text-dim mt-0.5">&mdash; {q.persona}</p>
@@ -461,8 +461,8 @@ export default function LandingPage() {
                             { end: 5000, suffix: '+', label: 'AI Explanations Ready', icon: Brain },
                         ].map((stat) => (
                             <div key={stat.label} className="glass-card p-6">
-                                <div className="mx-auto w-10 h-10 rounded-xl bg-hils-accent/10 flex items-center justify-center mb-3">
-                                    <stat.icon className="w-5 h-5 text-hils-accent-light" />
+                                <div className="mx-auto w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center mb-3">
+                                    <stat.icon className="w-5 h-5 text-[#CFCFCF]" />
                                 </div>
                                 <AnimatedCounter end={stat.end} suffix={stat.suffix} label={stat.label} />
                             </div>
@@ -475,8 +475,8 @@ export default function LandingPage() {
             {/* 8 FINAL CTA                                 */}
             {/* ═══════════════════════════════════════════ */}
             <section className="py-24 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-hils-accent/[0.03] to-transparent pointer-events-none" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-hils-accent/10 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-white/[0.04] rounded-full blur-[120px] pointer-events-none" />
 
                 <div className="max-w-3xl mx-auto px-6 text-center relative">
                     <FadeIn>
@@ -502,7 +502,7 @@ export default function LandingPage() {
             <section className="relative py-20 overflow-hidden">
                 {/* Radial glow behind text */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-[800px] h-[300px] bg-hils-accent/[0.04] rounded-full blur-[120px]" />
+                    <div className="w-[800px] h-[300px] bg-white/[0.03] rounded-full blur-[120px]" />
                 </div>
 
                 <div className="relative max-w-7xl mx-auto px-6 flex flex-col items-center">
@@ -510,7 +510,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4 mb-8">
                         <a
                             href="#"
-                            className="w-9 h-9 rounded-lg bg-hils-surface/60 border border-hils-border/40 flex items-center justify-center text-hils-text-dim hover:text-hils-accent-light hover:border-hils-accent/30 transition-all"
+                            className="w-9 h-9 rounded-lg bg-hils-surface/60 border border-hils-border/40 flex items-center justify-center text-hils-text-dim hover:text-white hover:border-white/[0.15] transition-all"
                             aria-label="GitHub"
                         >
                             <Github className="w-4 h-4" />
@@ -555,8 +555,8 @@ export default function LandingPage() {
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
                         <div>
                             <div className="flex items-center gap-2 mb-4">
-                                <div className="w-7 h-7 bg-hils-accent rounded-lg flex items-center justify-center">
-                                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                                <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
+                                    <Sparkles className="w-3.5 h-3.5 text-black" />
                                 </div>
                                 <span className="text-sm font-bold tracking-tight">HILS</span>
                             </div>
@@ -573,7 +573,7 @@ export default function LandingPage() {
                                     <a
                                         key={i}
                                         href={social.href}
-                                        className="w-8 h-8 rounded-lg bg-hils-surface border border-hils-border flex items-center justify-center text-hils-text-dim hover:text-hils-accent-light hover:border-hils-accent/30 transition-all"
+                                        className="w-8 h-8 rounded-lg bg-hils-surface border border-hils-border flex items-center justify-center text-hils-text-dim hover:text-white hover:border-white/[0.15] transition-all"
                                     >
                                         <social.icon className="w-3.5 h-3.5" />
                                     </a>
@@ -618,7 +618,7 @@ export default function LandingPage() {
                     <div className="border-t border-hils-border/50 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs text-hils-text-dim">&copy; 2026 HILS. All rights reserved.</p>
                         <p className="text-xs text-hils-text-dim flex items-center gap-1">
-                            Built with <Send className="w-3 h-3 text-hils-accent-light" /> by the HILS team
+                            Built with <Send className="w-3 h-3 text-[#CFCFCF]" /> by the HILS team
                         </p>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ export default function PersonaSelector() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-hils-surface border border-hils-border
-                   hover:border-hils-accent/30 transition-all duration-200"
+                   hover:border-white/[0.15] transition-all duration-200"
             >
                 <span className="text-lg">{activePersona.emoji}</span>
                 <span className="text-sm font-medium text-hils-text">{activePersona.name}</span>
@@ -37,7 +37,7 @@ export default function PersonaSelector() {
                                 }}
                                 className={`w-full flex items-start gap-3 p-3 rounded-lg transition-all duration-150
                   ${activePersona.id === persona.id
-                                        ? 'bg-hils-accent/10 border border-hils-accent/20'
+                                        ? 'bg-white/[0.08] border border-white/[0.12]'
                                         : 'hover:bg-hils-surface border border-transparent'
                                     }`}
                             >

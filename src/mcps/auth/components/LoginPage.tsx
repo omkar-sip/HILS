@@ -51,7 +51,7 @@ export default function LoginPage() {
             <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center">
                 {/* Subtle radial glow */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-[500px] h-[500px] bg-hils-accent/[0.06] rounded-full blur-[120px]" />
+                    <div className="w-[500px] h-[500px] bg-white/[0.03] rounded-full blur-[120px]" />
                 </div>
 
                 {/* HILS branding top-left */}
@@ -59,8 +59,8 @@ export default function LoginPage() {
                     to="/"
                     className="absolute top-6 left-6 flex items-center gap-2 group z-10"
                 >
-                    <div className="w-8 h-8 bg-hils-accent rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-hils-accent/20 transition-all">
-                        <Sparkles className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center group-hover:shadow-lg group-hover:shadow-white/10 transition-all">
+                        <Sparkles className="w-4 h-4 text-black" />
                     </div>
                     <span className="text-base font-bold tracking-tight text-white">
                         HILS
@@ -103,8 +103,8 @@ export default function LoginPage() {
                         <div className="mb-8">
                             {/* Mobile-only branding */}
                             <div className="lg:hidden flex items-center gap-2 mb-6">
-                                <div className="w-9 h-9 bg-hils-accent rounded-lg flex items-center justify-center">
-                                    <Sparkles className="w-4 h-4 text-white" />
+                                <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
+                                    <Sparkles className="w-4 h-4 text-black" />
                                 </div>
                                 <span className="text-lg font-bold tracking-tight text-white">HILS</span>
                             </div>
@@ -179,7 +179,7 @@ export default function LoginPage() {
                                 </label>
                                 <Link
                                     to="/forgot-password"
-                                    className="text-hils-accent-light hover:underline"
+                                    className="text-white hover:underline"
                                 >
                                     Forgot password?
                                 </Link>

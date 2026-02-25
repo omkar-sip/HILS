@@ -107,11 +107,11 @@ const CHARACTERS: CharacterDef[] = [
         ],
         mouth: { cx: 145, cy: 350, type: 'dot' },
     },
-    // Blocky (tall purple rectangle)
+    // Blocky (tall gray rectangle)
     {
         id: 'blocky',
         shape: 'tallRect',
-        color: '#7c3aed',
+        color: '#3f3f3f',
         x: 200,
         y: 120,
         w: 120,
@@ -192,7 +192,7 @@ export default function EyeTrackingCharacters({ mousePos, focusedField }: EyeTra
             {/* Subtle glow behind characters */}
             <defs>
                 <radialGradient id="bg-glow" cx="50%" cy="70%" r="50%">
-                    <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.08" />
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.04" />
                     <stop offset="100%" stopColor="#000000" stopOpacity="0" />
                 </radialGradient>
             </defs>

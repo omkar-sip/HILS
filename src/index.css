@@ -37,19 +37,19 @@
   }
 
   .glass-card-hover {
-    @apply glass-card transition-all duration-200 hover:border-hils-accent/30 hover:shadow-lg hover:shadow-hils-accent-glow;
+    @apply glass-card transition-all duration-200 hover:border-white/[0.15] hover:shadow-lg hover:shadow-black/20;
   }
 
   .btn-primary {
-    @apply px-6 py-2.5 bg-transparent text-white font-medium rounded-lg border border-white/80 transition-all duration-200 hover:bg-white hover:text-black active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none;
+    @apply px-6 py-2.5 bg-white text-black font-medium rounded-lg border border-white/80 transition-all duration-200 hover:bg-[#EAEAEA] active:bg-[#DADADA] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none;
   }
 
   .btn-secondary {
-    @apply px-6 py-2.5 bg-transparent text-hils-text-muted font-medium rounded-lg border border-hils-border transition-all duration-200 hover:border-white/40 hover:text-white active:scale-[0.98];
+    @apply px-6 py-2.5 bg-[#1A1A1A] text-white font-medium rounded-lg border border-white/[0.1] transition-all duration-200 hover:bg-[#222222] hover:border-white/[0.15] active:scale-[0.98];
   }
 
   .input-field {
-    @apply w-full px-4 py-3 bg-hils-surface border border-hils-border rounded-lg text-hils-text placeholder:text-hils-text-dim focus:outline-none focus:border-hils-accent focus:ring-1 focus:ring-hils-accent/30 transition-all duration-200;
+    @apply w-full px-4 py-3 bg-hils-surface border border-hils-border rounded-lg text-hils-text placeholder:text-hils-text-dim focus:outline-none focus:border-white/[0.4] focus:ring-1 focus:ring-white/[0.1] transition-all duration-200;
   }
 
   .section-title {
@@ -57,6 +57,6 @@
   }
 
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-hils-accent/10 text-hils-accent-light border border-hils-accent/20;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/[0.08] text-[#CFCFCF] border border-white/[0.12];
   }
 }

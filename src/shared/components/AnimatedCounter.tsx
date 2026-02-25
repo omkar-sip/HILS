@@ -35,7 +35,7 @@ export default function AnimatedCounter({ end, suffix = '', label, duration = 2 
             transition={{ duration: 0.5 }}
             className="text-center"
         >
-            <p className="text-4xl md:text-5xl font-bold text-hils-accent-light">
+            <p className="text-4xl md:text-5xl font-bold text-white">
                 {count}{suffix}
             </p>
             <p className="text-sm text-hils-text-muted mt-2">{label}</p>
