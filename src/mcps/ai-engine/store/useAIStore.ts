@@ -23,7 +23,7 @@ interface AIStore {
 }
 
 export const useAIStore = create<AIStore>((set, get) => ({
-    activeMode: 'explain',
+    activeMode: 'planner',
     currentTopicId: null,
     response: null,
     responseCache: {},

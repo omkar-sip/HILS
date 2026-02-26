@@ -41,6 +41,10 @@ export default function Router() {
                     }
                 >
                     <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/university/:university" element={<DashboardPage />} />
+                    <Route path="/semester/:semester" element={<DashboardPage />} />
+                    <Route path="/subject/:subjectCode" element={<DashboardPage />} />
+                    <Route path="/subject/:subjectCode/module/:moduleId" element={<DashboardPage />} />
                     <Route path="/topic/:topicId" element={<TopicPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                 </Route>

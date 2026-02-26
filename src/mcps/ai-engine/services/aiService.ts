@@ -4,7 +4,7 @@
  */
 import type { AIRequestPayload, AIResponse, LearningMode } from '../types/ai.types'
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent'
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 
 function getApiKey(): string {
     const key = import.meta.env.VITE_GEMINI_API_KEY
@@ -23,6 +23,8 @@ const MODE_TOKEN_LIMITS: Record<LearningMode, number> = {
     'exam_answer': 2048,
     'rapid_revision': 1024,
     'voice_teacher': 4096, // reuses explain prompt
+    'planner': 1024,
+    'explain_v2': 4096,
 }
 
 /**
@@ -39,6 +41,138 @@ function buildPrompt(payload: AIRequestPayload): string {
         : ''
 
     switch (mode) {
+        case 'planner':
+            return `You are part of an AI-powered VTU engineering exam preparation system.
+Your behavior depends strictly on the active tab: PLANNER MODE (Module-Level).
+
+Context Provided:
+- University: VTU
+- Subject: ${subjectName}
+- Module: ${moduleName}
+- Topic: ${topicName}
+${extraContext}
+
+GOAL:
+Help student prioritize preparation for this module based on repetition frequency and marks weightage.
+
+RULES:
+- Do NOT explain full concepts.
+- Do NOT generate exam answers.
+- Do NOT reference specific user question.
+- Provide strategic clarity only.
+
+OUTPUT STRUCTURE:
+
+### 1. Module Importance Snapshot
+- 3–4 confident lines about scope and manageability.
+- No explicit emotional language.
+- Tone should naturally reduce anxiety through clarity.
+
+### 2. High-Frequency Topics (⭐)
+- List topics repeated most in VTU QP.
+- Mark numerical-heavy topics (🧮).
+- Mark theory-heavy topics (📝).
+
+### 3. Priority Order
+1 → Must master
+2 → High scoring
+3 → Supporting
+4 → If time permits
+
+### 4. Smart Study Allocation
+- If 1 day left
+- If 3 days left
+- If 1 week left
+
+Keep concise.
+No deep explanations.
+No persona storytelling.
+Do NOT output JSON or wrap in markdown fences.`
+
+        case 'explain_v2':
+            return `You are part of an AI-powered VTU engineering exam preparation system.
+Your behavior depends strictly on the active tab: EXPLANATION MODE.
+
+Context Provided:
+- University: VTU
+- Subject: ${subjectName}
+- Module: ${moduleName}
+- Topic: ${topicName}
+- Selected Persona: ${personaModifier || 'Standard'}
+
+You MUST generate TWO parallel outputs:
+
+SECTION A → Persona-Based Concept Explanation  
+SECTION B → VTU Structured Exam Answer  
+
+Do not merge sections. Do not skip any subsection.
+
+----------------------------------------------------
+### SECTION A: Concept Explanation (Persona Tone Applies)
+----------------------------------------------------
+
+1. What the Topic Demands
+   - Clarify command words (Define / Explain / Compare / Derive)
+
+2. Core Concept
+   - Short definition
+   - Central idea
+
+3. Stepwise Breakdown
+   - Minimum 5 numbered steps
+   - Max 4 lines per step
+
+4. Example
+   - At least 1 clear example
+
+5. Key Takeaways
+   - Minimum 5 concise bullets
+
+Persona tone applies ONLY here.
+Structure remains fixed.
+
+----------------------------------------------------
+### SECTION B: VTU Exam Answer Format
+(Formal Academic Tone Only)
+----------------------------------------------------
+
+Title: Restate the topic exactly.
+
+1. Definition  
+2. Detailed Explanation (logically structured paragraphs)  
+3. Diagram Placeholder (if applicable)
+   - Write: [Draw diagram of ______]
+4. Example  
+5. Conclusion (2–3 lines max)
+
+Rules:
+- No persona tone.
+- No motivational phrasing.
+- Academic clarity.
+- Suitable for direct writing in exam booklet.
+
+----------------------------------------------------
+### SECTION C: Writing Strategy
+----------------------------------------------------
+
+Provide 6 concise bullets covering:
+- Ideal structure in answer booklet
+- Approximate page length (5M vs 10M)
+- Underlining strategy
+- Time allocation
+- Common mistakes students make
+
+====================================================
+GLOBAL ENFORCEMENT RULES
+====================================================
+- All sections are mandatory.
+- Exact section headers must appear.
+- Minimum structural depth: 5 numbered steps, 5 key takeaways.
+- Paragraphs must not exceed 4 lines.
+- No artificial word count enforcement.
+- Stop only after completing all sections.
+- Return ONLY the structured markdown text. DO NOT wrap in JSON.`
+
         case 'explain':
         case 'voice_teacher':
             return `You are an expert VTU engineering professor.${personaLine}
@@ -73,36 +207,111 @@ Provide a thorough, exam-focused explanation of this topic. Structure your respo
 Respond ONLY with valid JSON, no markdown fences.`
 
         case 'exam_answer':
-            return `You are an expert VTU exam answer writer. Write concise, scoring-optimized answers.${personaLine}
+            return `Use this ONLY in Exam Answer tab:
 
-${contextLine}${extraContext}
+You are generating a VTU university exam answer.
 
-Write a perfect exam answer for this topic (300-500 words max). Structure your response as JSON:
-- "explanation": A structured exam answer following this EXACT format (use markdown, **bold** keywords):
+This tab MUST ignore any selected persona.
+Do NOT use storytelling, conversational tone, or explanatory style.
+Use strict academic, point-wise format.
 
-  **Definition:** [Crisp 2-3 line definition using syllabus terminology]
+Context:
+- University: VTU
+- Semester: {semester}
+- Subject: {subject}
+- Module: {module}
+- Question: {user_question}
+- Marks: Infer 5M or 10M from wording.
 
-  **Structured Answer:**
-  [Well-organized scoring answer with numbered points. Use proper technical terms.]
+GOAL:
+Generate a high-scoring, evaluator-friendly, point-wise answer that is easy to recall and write in exam.
 
-  **Formula:** [All relevant formulas with SI units, if applicable]
+CRITICAL RULES:
+- No persona tone.
+- No long paragraphs.
+- No markdown symbols.
+- No bold styling.
+- No decorative language.
+- No conversational phrases.
+- Use precise syllabus terminology.
+- Every major idea must be in a numbered point.
+- Maximum 3–4 lines per point.
+- Optimized for underlining keywords.
 
-  **Applications:** [3-4 real-world applications, if relevant]
+====================================
+STRUCTURE (STRICT)
+====================================
 
-  **Conclusion:** [1-2 sentence conclusion summarizing key takeaway]
+Write the Question as Title.
 
-  **Diagram:** Draw "<Diagram Name>" [Name the diagram that should be drawn]
+Leave one line space.
 
-- "analogy": Leave empty string
-- "example": Leave empty string
-- "examQuestion": A model VTU exam question this answer would score full marks for
-- "summary": Key scoring points to remember
+1. Definition:
+- One precise academic definition.
+- Use key terms in CAPITAL LETTERS.
 
-Do NOT use conversational tone. No extra explanation outside exam structure.
-Keep total answer within 300-500 words strictly.
-Use terminology that matches VTU syllabus exactly.
+Leave one line space.
 
-Respond ONLY with valid JSON, no markdown fences.`
+2. Key Concepts / Explanation:
+- Use numbered points.
+- Each point must contain:
+  • Term
+  • Short explanation (2–3 lines max)
+- Use syllabus terminology.
+
+Leave one line space.
+
+3. Important Terminology:
+- List 4–6 key terms relevant to topic.
+- Each in separate point.
+
+Leave one line space.
+
+4. Example (if applicable):
+- Short structured example.
+- Use formula if relevant.
+
+Leave one line space.
+
+5. Diagram:
+If applicable:
+[Draw neat and labelled diagram of ______]
+
+If not applicable:
+Skip this section.
+
+Leave one line space.
+
+6. Conclusion:
+- 2 concise points summarizing importance.
+
+====================================
+MARKS ADAPTATION
+====================================
+
+If 5 Marks:
+- 4–6 main points only.
+- Short explanation.
+- Example optional.
+- No extended discussion.
+
+If 10 Marks:
+- 8–12 structured points.
+- Include example.
+- Include diagram placeholder if relevant.
+- Include terminology section.
+
+====================================
+SCORING OPTIMIZATION RULES
+====================================
+
+- Each point should be independently scorable.
+- Avoid merging multiple ideas in one paragraph.
+- Maintain logical flow.
+- Focus on DEFINITIONS, PROPERTIES, TYPES, FORMULAS, ADVANTAGES, LIMITATIONS if relevant.
+- Avoid narrative explanation.
+
+Stop only after completing full structured answer.`
 
         case 'rapid_revision':
             return `You are an expert VTU exam revision coach. Create ultra-compressed revision notes.${personaLine}
@@ -201,6 +410,8 @@ export const aiService = {
         const prompt = buildPrompt(payload)
         const maxOutputTokens = MODE_TOKEN_LIMITS[payload.mode] ?? 4096
 
+        const isRawTextMode = payload.mode === 'planner' || payload.mode === 'explain_v2' || payload.mode === 'exam_answer'
+
         const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -210,7 +421,7 @@ export const aiService = {
                 generationConfig: {
                     temperature: 0.7,
                     maxOutputTokens,
-                    responseMimeType: 'application/json',
+                    responseMimeType: isRawTextMode ? 'text/plain' : 'application/json',
                 },
             }),
         })
@@ -226,8 +437,21 @@ export const aiService = {
 
         if (!text) throw new Error('Empty response from Gemini API')
 
+        if (isRawTextMode) {
+            // For text-only modes, put all content in the explanation field
+            return {
+                explanation: text,
+                analogy: '',
+                example: '',
+                examQuestion: '',
+                summary: '',
+                sections: [],
+                generatedAt: Date.now(),
+            }
+        }
+
         try {
-            // Parse the JSON response
+            // Parse the JSON response for legacy modes
             const parsed = JSON.parse(text) as Record<string, string>
             return {
                 explanation: parsed.explanation || '',

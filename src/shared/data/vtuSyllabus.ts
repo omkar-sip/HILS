@@ -1,4 +1,4 @@
-import type { University } from '@/shared/types/syllabus.types'
+import type { University } from '../types/syllabus.types'
 
 // ─── VTU 2022 Scheme – CSE ───
 // Official syllabus data. Subject codes, module names and topic breakdowns

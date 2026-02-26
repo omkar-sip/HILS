@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     BookOpen, ChevronRight, Layers, CheckCircle2, Circle,
@@ -119,6 +119,7 @@ function WelcomeScreen({ onSetup }: { onSetup: () => void }) {
 // ─── Main Dashboard ────────────────────────────────────────────────────────────
 export default function DashboardPage() {
     const navigate = useNavigate()
+    const { subjectCode, moduleId } = useParams()
     const { profile, isLoading: profileLoading } = useAcademicProfileStore()
     const { isTopicCompleted, completedTopics } = useProgressStore()
 
@@ -126,15 +127,39 @@ export default function DashboardPage() {
     const [currentModule, setCurrentModule] = useState<string | null>(null)
     const [popupDismissed, setPopupDismissed] = useState(false)
 
+    // ── Resolve display names from IDs ────────────────────────────────────────
+    const names = useMemo(() => resolveAcademicNames(profile), [profile])
+    const currentSemData = useMemo(() => resolveSemesterData(profile), [profile])
+
+    // Sync route parameters to local state so breadcrumb navigation works
+    useEffect(() => {
+        if (!currentSemData) return
+
+        if (subjectCode) {
+            const subject = currentSemData.subjects.find(s => s.code === subjectCode)
+            if (subject) {
+                setCurrentSubject(subject.id)
+                if (moduleId) {
+                    const mod = subject.modules.find(m => m.id === moduleId)
+                    if (mod) setCurrentModule(mod.id)
+                } else {
+                    setCurrentModule(null)
+                }
+            } else {
+                setCurrentSubject(null)
+                setCurrentModule(null)
+            }
+        } else {
+            setCurrentSubject(null)
+            setCurrentModule(null)
+        }
+    }, [subjectCode, moduleId, currentSemData])
+
     const viewLevel: ViewLevel = currentModule ? 'topics' : currentSubject ? 'modules' : 'subjects'
     const hasAcademicProfile = !!profile
 
     // Show popup on each visit if no profile (not just dismissed once permanently)
     const showPopup = !hasAcademicProfile && !profileLoading && !popupDismissed
-
-    // ── Resolve display names from IDs ────────────────────────────────────────
-    const names = useMemo(() => resolveAcademicNames(profile), [profile])
-    const currentSemData = useMemo(() => resolveSemesterData(profile), [profile])
 
     // ── Last completed topic for "Continue" banner ────────────────────────────
     const lastTopic = useMemo(() => {

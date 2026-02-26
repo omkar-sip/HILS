@@ -11,6 +11,7 @@ import { useAIStore } from '@/mcps/ai-engine/store/useAIStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
 import { useProgressStore } from '@/mcps/progress/store/useProgressStore'
 import ExplanationRenderer from '@/mcps/ai-engine/components/ExplanationRenderer'
+import PlannerRenderer from '@/mcps/ai-engine/components/PlannerRenderer'
 import VoiceTeacher from '@/mcps/ai-engine/components/VoiceTeacher'
 import PersonaSelector from '@/mcps/persona/components/PersonaSelector'
 import { FEATURE_FLAGS } from '@/shared/config/featureFlags'
@@ -19,10 +20,11 @@ import type { LearningMode } from '@/mcps/ai-engine/types/ai.types'
 // ─── Tab Configuration ───
 
 const newModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
-    { mode: 'explain', label: 'Explain', icon: BookOpen },
+    { mode: 'planner', label: 'Planner', icon: BookOpen },
+    { mode: 'explain_v2', label: 'Explanation', icon: BookOpen },
     { mode: 'exam_answer', label: 'Exam Answer', icon: FileText },
-    { mode: 'voice_teacher', label: 'Voice Teacher', icon: Volume2 },
     { mode: 'rapid_revision', label: 'Rapid Revision', icon: Zap },
+    { mode: 'voice_teacher', label: 'Voice Teacher', icon: Volume2 },
 ]
 
 const legacyModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
@@ -35,7 +37,7 @@ export default function TopicPage() {
     const { topicId } = useParams<{ topicId: string }>()
     const navigate = useNavigate()
 
-    const { activeMode, setMode, response, isLoading, error, setTopic, generateExplanation, responseCache } = useAIStore()
+    const { activeMode, setMode, isLoading, error, setTopic, generateExplanation, responseCache } = useAIStore()
     const { activePersona } = usePersonaStore()
     const { isTopicCompleted, markComplete } = useProgressStore()
 
@@ -118,11 +120,17 @@ export default function TopicPage() {
     }
 
     // For Voice Teacher: try to get cached explain response
+    const currentCacheKey = `${topic.id}:${activeMode}:${activePersona.id}`
+    const currentResponse = responseCache[currentCacheKey] ?? null
+
+    // For Voice Teacher: try to get cached explain response
     const explainCacheKey = `${topic.id}:explain:${activePersona.id}`
     const cachedExplainResponse = responseCache[explainCacheKey] ?? null
 
     const getButtonText = (): string => {
         switch (activeMode) {
+            case 'planner': return 'Generate Plan'
+            case 'explain_v2': return 'Generate Explanation'
             case 'quiz': return 'Generate Quiz'
             case 'summary': return 'Generate Summary'
             case 'deep-dive': return 'Generate Deep Dive'
@@ -136,16 +144,32 @@ export default function TopicPage() {
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-1.5 mb-6 text-xs text-hils-text-muted">
-                <button onClick={() => navigate('/dashboard')} className="hover:text-hils-accent-light transition-colors">
-                    VTU
-                </button>
-                <span>/</span>
-                <span>Sem {semester.number}</span>
-                <span>/</span>
-                <span>{subject.code}</span>
-                <span>/</span>
-                <span>{mod.name}</span>
+            <div className="flex items-center gap-2 mb-6 text-xs text-hils-text-muted overflow-x-auto whitespace-nowrap pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                {[
+                    { label: vtuSyllabus?.shortName, path: vtuSyllabus?.id ? `/university/${vtuSyllabus.id}` : '' },
+                    { label: semester?.number ? `Sem ${semester.number}` : '', path: semester?.number ? `/semester/${semester.number}` : '' },
+                    { label: subject?.code, path: subject?.code ? `/subject/${subject.code}` : '' },
+                    { label: mod?.name, path: subject?.code && mod?.id ? `/subject/${subject.code}/module/${mod.id}` : '' },
+                    { label: topic?.name, path: '', isActive: true }
+                ]
+                    .filter(seg => seg.label)
+                    .map((seg, idx) => (
+                        <div key={idx} className="flex items-center gap-2 flex-shrink-0">
+                            {idx > 0 && <span className="text-hils-text-dim">/</span>}
+                            {seg.isActive ? (
+                                <span className="font-bold text-hils-accent">
+                                    {seg.label}
+                                </span>
+                            ) : (
+                                <button
+                                    onClick={() => navigate(seg.path)}
+                                    className="hover:text-hils-accent-light transition-colors cursor-pointer"
+                                >
+                                    {seg.label}
+                                </button>
+                            )}
+                        </div>
+                    ))}
             </div>
 
             {/* Topic Header */}
@@ -233,10 +257,14 @@ export default function TopicPage() {
                         </div>
                         <p className="text-sm text-hils-text-muted">{error}</p>
                     </div>
-                ) : response ? (
-                    <ExplanationRenderer response={response} />
+                ) : currentResponse ? (
+                    activeMode === 'planner' || activeMode === 'explain_v2' || activeMode === 'exam_answer' ? (
+                        <PlannerRenderer response={currentResponse} />
+                    ) : (
+                        <ExplanationRenderer response={currentResponse} />
+                    )
                 ) : (
-                    <div className="glass-card p-8 text-center">
+                    <div className="glass-card flex flex-col items-center justify-center p-8 text-center min-h-[300px]">
                         <Brain className="w-12 h-12 text-hils-text-dim mx-auto mb-4" />
                         <h3 className="text-lg font-semibold text-hils-text mb-2">Ready to learn</h3>
                         <p className="text-sm text-hils-text-muted mb-6 max-w-md mx-auto">

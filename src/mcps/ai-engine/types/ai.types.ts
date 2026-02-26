@@ -1,6 +1,6 @@
 // ─── AI Engine Types ───
 
-export type LearningMode = 'explain' | 'quiz' | 'summary' | 'deep-dive' | 'exam_answer' | 'rapid_revision' | 'voice_teacher'
+export type LearningMode = 'explain' | 'quiz' | 'summary' | 'deep-dive' | 'exam_answer' | 'rapid_revision' | 'voice_teacher' | 'planner' | 'explain_v2'
 
 export interface AIResponseSection {
     title: string
