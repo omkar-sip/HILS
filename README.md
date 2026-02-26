@@ -297,3 +297,15 @@ firebase deploy
 - **Cheat-Sheet Synthesis:** Utilizing "Rapid Revision" prompts to compress entire textbook chapters into sub-4-page structures.
 - **Institutional Implementation:** Coaching centers pulling strictly VTU-aligned materials directly from structured outputs without manual formatting overhead.
 - **Platform Integration:** Exporting deterministic JSON parameters via backend pathways for integration into external revision dashboards.
+
+## Contact & Support
+
+### Project Information
+- **Developer**: Omkar Shirvalkar
+- **LinkedIn**: [linkedin.com/in/omkar-shirvalkar-1941ab269/](https://www.linkedin.com/in/omkar-shirvalkar-1941ab269/)
+- **GitHub**: [github.com/omkar-sip/HILS](https://github.com/omkar-sip/HILS)
+- **Email**: omkarshirvalkar@gmail.com
+
+### Enterprise Inquiries
+For institutional deployments, custom features, or consulting services:
+- Email: omkarshirvalkar@gmail.com
