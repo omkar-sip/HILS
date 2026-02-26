@@ -2,7 +2,7 @@
  * AI Service — calls Gemini 2.0 Flash directly via REST API.
  * No Cloud Functions needed.
  */
-import type { AIRequestPayload, AIResponse } from '../types/ai.types'
+import type { AIRequestPayload, AIResponse, LearningMode } from '../types/ai.types'
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent'
 
@@ -10,6 +10,19 @@ function getApiKey(): string {
     const key = import.meta.env.VITE_GEMINI_API_KEY
     if (!key) throw new Error('VITE_GEMINI_API_KEY is not set in .env')
     return key
+}
+
+/**
+ * Per-mode token limits to stay within cost / output-length guardrails.
+ */
+const MODE_TOKEN_LIMITS: Record<LearningMode, number> = {
+    'explain': 4096,
+    'deep-dive': 4096,
+    'quiz': 4096,
+    'summary': 2048,
+    'exam_answer': 2048,
+    'rapid_revision': 1024,
+    'voice_teacher': 4096, // reuses explain prompt
 }
 
 /**
@@ -27,16 +40,111 @@ function buildPrompt(payload: AIRequestPayload): string {
 
     switch (mode) {
         case 'explain':
+        case 'voice_teacher':
             return `You are an expert VTU engineering professor.${personaLine}
 
 ${contextLine}${extraContext}
 
-Provide a thorough explanation of this topic. Structure your response as JSON with these fields:
-- "explanation": A detailed, clear explanation (2-4 paragraphs, use markdown formatting)
+Provide a thorough, exam-focused explanation of this topic. Structure your response as JSON with these fields:
+- "explanation": A structured explanation following this format (use markdown formatting, **bold** keywords):
+
+  **Definition:** [Clear 2-3 line definition]
+
+  **Core Concept:** [Fundamental idea behind this topic]
+
+  **Stepwise Explanation:**
+  1. [Step 1]
+  2. [Step 2]
+  ...
+
+  **Formula (if applicable):** [Formula with units]
+
+  **Example:** [Practical example, use code blocks if relevant]
+
+  **Common Mistakes:** [Bullet list of common errors students make]
+
+  **Where Asked in Exams:** [Which types of exam questions typically cover this]
+
 - "analogy": A memorable real-world analogy that makes this concept click
 - "example": A practical example with code/diagram if applicable (use markdown code blocks)
 - "examQuestion": A likely VTU exam question with a model answer
 - "summary": A 2-3 sentence summary of the key takeaway
+
+Respond ONLY with valid JSON, no markdown fences.`
+
+        case 'exam_answer':
+            return `You are an expert VTU exam answer writer. Write concise, scoring-optimized answers.${personaLine}
+
+${contextLine}${extraContext}
+
+Write a perfect exam answer for this topic (300-500 words max). Structure your response as JSON:
+- "explanation": A structured exam answer following this EXACT format (use markdown, **bold** keywords):
+
+  **Definition:** [Crisp 2-3 line definition using syllabus terminology]
+
+  **Structured Answer:**
+  [Well-organized scoring answer with numbered points. Use proper technical terms.]
+
+  **Formula:** [All relevant formulas with SI units, if applicable]
+
+  **Applications:** [3-4 real-world applications, if relevant]
+
+  **Conclusion:** [1-2 sentence conclusion summarizing key takeaway]
+
+  **Diagram:** Draw "<Diagram Name>" [Name the diagram that should be drawn]
+
+- "analogy": Leave empty string
+- "example": Leave empty string
+- "examQuestion": A model VTU exam question this answer would score full marks for
+- "summary": Key scoring points to remember
+
+Do NOT use conversational tone. No extra explanation outside exam structure.
+Keep total answer within 300-500 words strictly.
+Use terminology that matches VTU syllabus exactly.
+
+Respond ONLY with valid JSON, no markdown fences.`
+
+        case 'rapid_revision':
+            return `You are an expert VTU exam revision coach. Create ultra-compressed revision notes.${personaLine}
+
+${contextLine}${extraContext}
+
+Create rapid revision notes designed for a 10-minute glance. Structure as JSON:
+- "explanation": Compressed revision content in this EXACT format (use markdown):
+
+  **🔑 Key Terms:**
+  - [Keyword 1]: [One-line definition]
+  - [Keyword 2]: [One-line definition]
+  ...
+
+  **📐 Formulas:**
+  - [Formula 1 with units]
+  - [Formula 2 with units]
+  ...
+
+  **📊 Diagrams to Draw:**
+  - [Diagram 1 name]
+  - [Diagram 2 name]
+  ...
+
+  **🎤 5 Probable Viva Questions:**
+  1. [Question 1]
+  2. [Question 2]
+  3. [Question 3]
+  4. [Question 4]
+  5. [Question 5]
+
+  **🧠 Memory Triggers:**
+  - [Mnemonic or memory hook 1]
+  - [Mnemonic or memory hook 2]
+  ...
+
+- "analogy": One-line memory hook for the entire topic
+- "example": Leave empty string
+- "examQuestion": Most likely exam question on this topic
+- "summary": Absolute minimum someone needs to know (1-2 sentences)
+
+Keep it EXTREMELY concise. Bullet points only. No paragraphs.
 
 Respond ONLY with valid JSON, no markdown fences.`
 
@@ -88,18 +196,20 @@ Respond ONLY with valid JSON, no markdown fences.`
 }
 
 export const aiService = {
-    async fetchExplanation(payload: AIRequestPayload): Promise<AIResponse> {
+    async fetchExplanation(payload: AIRequestPayload, signal?: AbortSignal): Promise<AIResponse> {
         const apiKey = getApiKey()
         const prompt = buildPrompt(payload)
+        const maxOutputTokens = MODE_TOKEN_LIMITS[payload.mode] ?? 4096
 
         const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            signal,
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
                     temperature: 0.7,
-                    maxOutputTokens: 4096,
+                    maxOutputTokens,
                     responseMimeType: 'application/json',
                 },
             }),

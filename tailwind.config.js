@@ -4,7 +4,7 @@ export default {
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
-    darkMode: 'class',
+
     theme: {
         extend: {
             colors: {
@@ -22,6 +22,10 @@ export default {
                     success: '#22c55e',
                     warning: '#eab308',
                     danger: '#ef4444',
+                    'btn-hover': '#EAEAEA',
+                    'btn-active': '#DADADA',
+                    'btn-secondary-bg': '#1A1A1A',
+                    'btn-secondary-hover': '#222222',
                 },
             },
             fontFamily: {

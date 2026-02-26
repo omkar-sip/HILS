@@ -25,3 +25,6 @@ Thumbs.db
 # Firebase
 .firebase
 *.log
+
+# Service account keys (sensitive!)
+**/serviceAccountKey.json

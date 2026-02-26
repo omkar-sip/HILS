@@ -3,18 +3,29 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
     ArrowLeft, ArrowRight, BookOpen, Brain, FileText,
-    Telescope, CheckCircle2, Loader2, AlertTriangle
+    Telescope, CheckCircle2, Loader2, AlertTriangle,
+    Volume2, Zap
 } from 'lucide-react'
 import { vtuSyllabus } from '@/shared/data/vtuSyllabus'
 import { useAIStore } from '@/mcps/ai-engine/store/useAIStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
 import { useProgressStore } from '@/mcps/progress/store/useProgressStore'
 import ExplanationRenderer from '@/mcps/ai-engine/components/ExplanationRenderer'
+import VoiceTeacher from '@/mcps/ai-engine/components/VoiceTeacher'
 import PersonaSelector from '@/mcps/persona/components/PersonaSelector'
+import { FEATURE_FLAGS } from '@/shared/config/featureFlags'
 import type { LearningMode } from '@/mcps/ai-engine/types/ai.types'
 
-const modeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
+// ─── Tab Configuration ───
+
+const newModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
     { mode: 'explain', label: 'Explain', icon: BookOpen },
+    { mode: 'exam_answer', label: 'Exam Answer', icon: FileText },
+    { mode: 'voice_teacher', label: 'Voice Teacher', icon: Volume2 },
+    { mode: 'rapid_revision', label: 'Rapid Revision', icon: Zap },
+]
+
+const legacyModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
     { mode: 'deep-dive', label: 'Deep Dive', icon: Telescope },
     { mode: 'quiz', label: 'Quiz', icon: Brain },
     { mode: 'summary', label: 'Summary', icon: FileText },
@@ -24,9 +35,17 @@ export default function TopicPage() {
     const { topicId } = useParams<{ topicId: string }>()
     const navigate = useNavigate()
 
-    const { activeMode, setMode, response, isLoading, error, setTopic, generateExplanation } = useAIStore()
+    const { activeMode, setMode, response, isLoading, error, setTopic, generateExplanation, responseCache } = useAIStore()
     const { activePersona } = usePersonaStore()
     const { isTopicCompleted, markComplete } = useProgressStore()
+
+    // Build mode options based on feature flag
+    const modeOptions = useMemo(() => {
+        if (FEATURE_FLAGS.showLegacyTabs) {
+            return [...newModeOptions, ...legacyModeOptions]
+        }
+        return newModeOptions
+    }, [])
 
     // Find topic in VTU syllabus tree (branches → semesters → subjects → modules → topics)
     const topicContext = useMemo(() => {
@@ -81,6 +100,37 @@ export default function TopicPage() {
 
     const handleMarkComplete = () => {
         markComplete(topic.id, activeMode, activePersona.id)
+    }
+
+    const handleGenerate = () => {
+        if (!topicContext) return
+        const { topic, subject, module: mod } = topicContext
+        generateExplanation({
+            topicId: topic.id,
+            topicName: topic.name,
+            subjectName: subject.name,
+            moduleName: mod.name,
+            personaId: activePersona.id,
+            personaModifier: activePersona.promptModifier,
+            mode: activeMode,
+            syllabusContext: topic.description,
+        })
+    }
+
+    // For Voice Teacher: try to get cached explain response
+    const explainCacheKey = `${topic.id}:explain:${activePersona.id}`
+    const cachedExplainResponse = responseCache[explainCacheKey] ?? null
+
+    const getButtonText = (): string => {
+        switch (activeMode) {
+            case 'quiz': return 'Generate Quiz'
+            case 'summary': return 'Generate Summary'
+            case 'deep-dive': return 'Generate Deep Dive'
+            case 'exam_answer': return 'Generate Exam Answer'
+            case 'rapid_revision': return 'Generate Revision Notes'
+            case 'voice_teacher': return 'Generate Explanation'
+            default: return 'Generate Explanation'
+        }
     }
 
     return (
@@ -155,10 +205,24 @@ export default function TopicPage() {
 
             {/* AI Response Area */}
             <div className="mb-8">
-                {isLoading ? (
+                {activeMode === 'voice_teacher' ? (
+                    /* Voice Teacher mode — dedicated component */
+                    <VoiceTeacher
+                        explainResponse={cachedExplainResponse}
+                        topicContext={topicContext ? {
+                            topicId: topic.id,
+                            topicName: topic.name,
+                            subjectName: subject.name,
+                            moduleName: mod.name,
+                            syllabusContext: topic.description,
+                        } : null}
+                        personaId={activePersona.id}
+                        personaModifier={activePersona.promptModifier}
+                    />
+                ) : isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 glass-card">
                         <Loader2 className="w-8 h-8 text-hils-accent animate-spin mb-4" />
-                        <p className="text-hils-text-muted text-sm">Generating explanation...</p>
+                        <p className="text-hils-text-muted text-sm">Generating {activeMode === 'exam_answer' ? 'exam answer' : activeMode === 'rapid_revision' ? 'revision notes' : 'explanation'}...</p>
                         <p className="text-hils-text-dim text-xs mt-1">Using {activePersona.name} persona</p>
                     </div>
                 ) : error ? (
@@ -182,25 +246,9 @@ export default function TopicPage() {
                         <button
                             className="btn-primary"
                             disabled={isLoading}
-                            onClick={() => {
-                                if (!topicContext) return
-                                const { topic, subject, module: mod } = topicContext
-                                generateExplanation({
-                                    topicId: topic.id,
-                                    topicName: topic.name,
-                                    subjectName: subject.name,
-                                    moduleName: mod.name,
-                                    personaId: activePersona.id,
-                                    personaModifier: activePersona.promptModifier,
-                                    mode: activeMode,
-                                    syllabusContext: topic.description,
-                                })
-                            }}
+                            onClick={handleGenerate}
                         >
-                            {activeMode === 'quiz' ? 'Generate Quiz'
-                                : activeMode === 'summary' ? 'Generate Summary'
-                                    : activeMode === 'deep-dive' ? 'Generate Deep Dive'
-                                        : 'Generate Explanation'}
+                            {getButtonText()}
                         </button>
                     </div>
                 )}
