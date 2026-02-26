@@ -10,7 +10,7 @@
 
 HILS (High-Intensity Learning System) provides a programmatic, highly constrained environment for digesting strict university syllabi. It generates recall-optimized, structurally enforced academic responses engineered for maximum evaluator scoring. Here are the screenshots of a working example on a Web Browser.
 
- ![image](https://via.placeholder.com/1000x400/0d1117/58a6ff?text=HILS+Dashboard+Screenshot)
+ ![image](https://deaf-lime-eiide1xbbi.edgeone.app/BrowserUI.png)
 
 *If you're interested in the prompt compilation mechanics that power this application, have a look at [this section](#prompt-engineering-strategy).*
 
