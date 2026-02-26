@@ -1,20 +1,38 @@
-# HILS: High-Intensity Learning System
+# HILS
 
-Structured Academic Intelligence and Cognitive Optimization Platform
+[![MADE WITH REACT](https://img.shields.io/badge/MADE_WITH-REACT-ef5350?style=for-the-badge)](#) [![BUILT WITH LOVE](https://img.shields.io/badge/BUILT_WITH-%E2%99%A5-f97316?style=for-the-badge)](#)
 
-HILS provides a programmatic, highly constrained environment for digesting strict university syllabi. It generates recall-optimized, structurally enforced academic responses engineered for maximum evaluator scoring.
+[![Frontend](https://img.shields.io/badge/Frontend-React_18_%7C_TypeScript-61dafb.svg)](#) [![Backend](https://img.shields.io/badge/Backend-Node.js_%7C_Firebase_Functions-339933.svg)](#) [![LLM](https://img.shields.io/badge/LLM-Gemini_Engine-ff9900.svg)](#) [![Database](https://img.shields.io/badge/Database-Firestore-ffca28.svg)](#) [![Deployment](https://img.shields.io/badge/Deployment-Firebase_Hosting-039be5.svg)](#)
 
-[![Frontend](https://img.shields.io/badge/Frontend-React_18_%7C_TypeScript-blue.svg)](#)
-[![Backend](https://img.shields.io/badge/Backend-Node.js_%7C_Firebase_Functions-green.svg)](#)
-[![LLM](https://img.shields.io/badge/LLM-Gemini_Engine-orange.svg)](#)
-[![Database](https://img.shields.io/badge/Database-Firestore-red.svg)](#)
-[![Deployment](https://img.shields.io/badge/Deployment-Firebase_Hosting-lightgrey.svg)](#)
+HILS (High-Intensity Learning System) provides a programmatic, highly constrained environment for digesting strict university syllabi. It generates recall-optimized, structurally enforced academic responses engineered for maximum evaluator scoring. Here are the screenshots of a working example on a Web Browser.
 
-[Live Demo] | [System Architecture] | [API Documentation]
+<br>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/omkar-sip/HILS/main/docs/screenshot.png" alt="HILS Interface Screenshot" width="100%" onerror="this.onerror=null; this.src='https://via.placeholder.com/1000x400/0d1117/58a6ff?text=HILS+Dashboard+Screenshot';">
+</p>
+<br>
+
+*If you're interested in the prompt compilation mechanics that power this application, have a look at the [Prompt Engineering Strategy](#prompt-engineering-strategy).*
+
+## Table of contents
+
+- [Problem Statement](#problem-statement)
+- [Solution Architecture Overview](#solution-architecture-overview)
+- [Core System Modules (Layered Architecture)](#core-system-modules-layered-architecture)
+- [Feature Breakdown](#feature-breakdown)
+- [Scalability & System Design](#scalability--system-design)
+- [Folder Structure (Frontend + Backend)](#folder-structure-frontend--backend)
+- [Technology Stack](#technology-stack)
+- [Prompt Engineering Strategy](#prompt-engineering-strategy)
+- [Future Roadmap](#future-roadmap)
+- [Security & Data Policy](#security--data-policy)
+- [Installation & Deployment Guide](#installation--deployment-guide)
+- [Use Cases](#use-cases)
+- [Contact & Support](#contact--support)
 
 ---
 
-## 2. Problem Statement
+## Problem Statement
 
 Modern engineering curricula impose high volumes of theoretical content within strict schedules. During these constrained timeframes, students face critical bottlenecks:
 
@@ -27,7 +45,7 @@ HILS aggressively limits LLM execution. It forces a syllabus-bound, pointwise ar
 
 ---
 
-## 3. Solution Architecture Overview
+## Solution Architecture Overview
 
 HILS replaces non-deterministic AI chat with a strict, prompt-compiled, syllabus-driven pipeline. It operates as an academic intelligence compiler.
 
@@ -53,7 +71,7 @@ By injecting exact academic metadata into an imperatively structured prompt, HIL
 
 ---
 
-## 4. Core System Modules (Layered Architecture)
+## Core System Modules (Layered Architecture)
 
 The system is compartmentalized into five independent layers to ensure high cohesion.
 
@@ -94,7 +112,7 @@ Front-end client optimized for cognitive load reduction.
 
 ---
 
-## 5. Feature Breakdown
+## Feature Breakdown
 
 ### Exam Optimization
 - **Marks-Based Generation:** Automatically scales point count for 5M vs 10M requirements.
@@ -120,7 +138,7 @@ Front-end client optimized for cognitive load reduction.
 
 ---
 
-## 6. Scalability & System Design
+## Scalability & System Design
 
 HILS relies exclusively on Google’s Firebase infrastructure for serverless, horizontally scaling operations.
 
@@ -152,7 +170,7 @@ HILS relies exclusively on Google’s Firebase infrastructure for serverless, ho
 
 ---
 
-## 7. Folder Structure (Frontend + Backend)
+## Folder Structure (Frontend + Backend)
 
 The monolithic repository enforces strict boundaries between the React client codebase and serverless functions.
 
@@ -182,7 +200,7 @@ HILS/
 
 ---
 
-## 8. Technology Stack
+## Technology Stack
 
 ### Backend
 - **Runtime:** Node.js
@@ -209,7 +227,7 @@ HILS/
 
 ---
 
-## 9. Prompt Engineering Strategy
+## Prompt Engineering Strategy
 
 HILS mitigates LLM variation via a highly deterministic, programmatic prompt architecture.
 
@@ -221,7 +239,7 @@ HILS mitigates LLM variation via a highly deterministic, programmatic prompt arc
 
 ---
 
-## 10. Future Roadmap
+## Future Roadmap
 
 - **Geographic University Expansion:** Map adjacent state universities into the core data schema.
 - **Weak-Area Algorithmic Detection:** Track quiz scores internally to isolate and flag failing learning modules.
@@ -230,7 +248,7 @@ HILS mitigates LLM variation via a highly deterministic, programmatic prompt arc
 
 ---
 
-## 11. Security & Data Policy
+## Security & Data Policy
 
 HILS executes a rigid, zero-fluff data policy to assure privacy.
 
@@ -240,7 +258,7 @@ HILS executes a rigid, zero-fluff data policy to assure privacy.
 
 ---
 
-## 12. Installation & Deployment Guide
+## Installation & Deployment Guide
 
 ### Prerequisites
 - Node.js >= 18.0.0
@@ -291,12 +309,14 @@ firebase deploy
 
 ---
 
-## 13. Use Cases
+## Use Cases
 
 - **Targeted Exam Preparation:** Decoding dense algorithmic topics hours before an examination utilizing precise "Planner" bounds.
 - **Cheat-Sheet Synthesis:** Utilizing "Rapid Revision" prompts to compress entire textbook chapters into sub-4-page structures.
 - **Institutional Implementation:** Coaching centers pulling strictly VTU-aligned materials directly from structured outputs without manual formatting overhead.
 - **Platform Integration:** Exporting deterministic JSON parameters via backend pathways for integration into external revision dashboards.
+
+---
 
 ## Contact & Support
 
