@@ -1,38 +1,36 @@
 # HILS
+[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
+[![forthebadge](http://forthebadge.com/images/badges/uses-js.svg)](http://forthebadge.com)
 
-[![MADE WITH REACT](https://img.shields.io/badge/MADE_WITH-REACT-ef5350?style=for-the-badge)](#) [![BUILT WITH LOVE](https://img.shields.io/badge/BUILT_WITH-%E2%99%A5-f97316?style=for-the-badge)](#)
-
-[![Frontend](https://img.shields.io/badge/Frontend-React_18_%7C_TypeScript-61dafb.svg)](#) [![Backend](https://img.shields.io/badge/Backend-Node.js_%7C_Firebase_Functions-339933.svg)](#) [![LLM](https://img.shields.io/badge/LLM-Gemini_Engine-ff9900.svg)](#) [![Database](https://img.shields.io/badge/Database-Firestore-ffca28.svg)](#) [![Deployment](https://img.shields.io/badge/Deployment-Firebase_Hosting-039be5.svg)](#)
+[![Frontend](https://img.shields.io/badge/Frontend-React_18_%7C_TypeScript-61dafb.svg)](https://react.dev/)
+[![Backend](https://img.shields.io/badge/Backend-Node.js_%7C_Firebase_Functions-339933.svg)](https://nodejs.org/)
+[![LLM](https://img.shields.io/badge/LLM-Gemini_Engine-ff9900.svg)](https://ai.google.dev/)
+[![Database](https://img.shields.io/badge/Database-Firestore-ffca28.svg)](https://firebase.google.com/docs/firestore)
+[![Deployment](https://img.shields.io/badge/Deployment-Firebase_Hosting-039be5.svg)](https://firebase.google.com/)
 
 HILS (High-Intensity Learning System) provides a programmatic, highly constrained environment for digesting strict university syllabi. It generates recall-optimized, structurally enforced academic responses engineered for maximum evaluator scoring. Here are the screenshots of a working example on a Web Browser.
 
-<br>
-<p align="center">
-  <img src="https://raw.githubusercontent.com/omkar-sip/HILS/main/docs/screenshot.png" alt="HILS Interface Screenshot" width="100%" onerror="this.onerror=null; this.src='https://via.placeholder.com/1000x400/0d1117/58a6ff?text=HILS+Dashboard+Screenshot';">
-</p>
-<br>
+ ![image](https://via.placeholder.com/1000x400/0d1117/58a6ff?text=HILS+Dashboard+Screenshot)
 
-*If you're interested in the prompt compilation mechanics that power this application, have a look at the [Prompt Engineering Strategy](#prompt-engineering-strategy).*
+*If you're interested in the prompt compilation mechanics that power this application, have a look at [this section](#prompt-engineering-strategy).*
 
-## Table of contents
+# Table of contents
+- [Problem statement](#problem-statement)
+- [Solution architecture overview](#solution-architecture-overview)
+- [Core system modules (layered architecture)](#core-system-modules-layered-architecture)
+- [Feature breakdown](#feature-breakdown)
+- [Scalability & system design](#scalability--system-design)
+- [Folder structure (frontend + backend)](#folder-structure-frontend--backend)
+- [Technology stack](#technology-stack)
+- [Prompt engineering strategy](#prompt-engineering-strategy)
+- [Future roadmap](#future-roadmap)
+- [Security & data policy](#security--data-policy)
+- [Installation & deployment guide](#installation--deployment-guide)
+- [Use cases](#use-cases)
+- [Contact & support](#contact--support)
 
-- [Problem Statement](#problem-statement)
-- [Solution Architecture Overview](#solution-architecture-overview)
-- [Core System Modules (Layered Architecture)](#core-system-modules-layered-architecture)
-- [Feature Breakdown](#feature-breakdown)
-- [Scalability & System Design](#scalability--system-design)
-- [Folder Structure (Frontend + Backend)](#folder-structure-frontend--backend)
-- [Technology Stack](#technology-stack)
-- [Prompt Engineering Strategy](#prompt-engineering-strategy)
-- [Future Roadmap](#future-roadmap)
-- [Security & Data Policy](#security--data-policy)
-- [Installation & Deployment Guide](#installation--deployment-guide)
-- [Use Cases](#use-cases)
-- [Contact & Support](#contact--support)
-
----
-
-## Problem Statement
+# Problem statement
+[(Back to top)](#table-of-contents)
 
 Modern engineering curricula impose high volumes of theoretical content within strict schedules. During these constrained timeframes, students face critical bottlenecks:
 
@@ -43,9 +41,8 @@ Modern engineering curricula impose high volumes of theoretical content within s
 
 HILS aggressively limits LLM execution. It forces a syllabus-bound, pointwise architecture designed exclusively for rapid cognitive processing and exam scoring.
 
----
-
-## Solution Architecture Overview
+# Solution architecture overview
+[(Back to top)](#table-of-contents)
 
 HILS replaces non-deterministic AI chat with a strict, prompt-compiled, syllabus-driven pipeline. It operates as an academic intelligence compiler.
 
@@ -69,9 +66,8 @@ HILS replaces non-deterministic AI chat with a strict, prompt-compiled, syllabus
 
 By injecting exact academic metadata into an imperatively structured prompt, HILS forces the LLM to strip conversational drift and enforce evaluator-friendly outputs.
 
----
-
-## Core System Modules (Layered Architecture)
+# Core system modules (layered architecture)
+[(Back to top)](#table-of-contents)
 
 The system is compartmentalized into five independent layers to ensure high cohesion.
 
@@ -110,9 +106,8 @@ Front-end client optimized for cognitive load reduction.
 - **Clean UI:** Monochromatic grey/black themes to minimize visual fatigue.
 - **Focus Layout:** Strips sidebars and extraneous features during active reading.
 
----
-
-## Feature Breakdown
+# Feature breakdown
+[(Back to top)](#table-of-contents)
 
 ### Exam Optimization
 - **Marks-Based Generation:** Automatically scales point count for 5M vs 10M requirements.
@@ -136,9 +131,8 @@ Front-end client optimized for cognitive load reduction.
 - **Modular Design Structure:** Component isolation driven systematically by domain features (MCPs).
 - **Async Processing:** Non-blocking interface for LLM request streaming and rendering.
 
----
-
-## Scalability & System Design
+# Scalability & system design
+[(Back to top)](#table-of-contents)
 
 HILS relies exclusively on Google’s Firebase infrastructure for serverless, horizontally scaling operations.
 
@@ -168,9 +162,8 @@ HILS relies exclusively on Google’s Firebase infrastructure for serverless, ho
                       └──> [Prompt Engine] ──> [Gemini API Endpoints]
 ```
 
----
-
-## Folder Structure (Frontend + Backend)
+# Folder structure (frontend + backend)
+[(Back to top)](#table-of-contents)
 
 The monolithic repository enforces strict boundaries between the React client codebase and serverless functions.
 
@@ -198,9 +191,8 @@ HILS/
         └── utils/            # Helper formats and generic logic
 ```
 
----
-
-## Technology Stack
+# Technology stack
+[(Back to top)](#table-of-contents)
 
 ### Backend
 - **Runtime:** Node.js
@@ -225,9 +217,8 @@ HILS/
 - **CI/CD Configuration:** GitHub Actions (Automated Deployment)
 - **Provider:** Firebase Authentication (OAuth / Email Session State)
 
----
-
-## Prompt Engineering Strategy
+# Prompt engineering strategy
+[(Back to top)](#table-of-contents)
 
 HILS mitigates LLM variation via a highly deterministic, programmatic prompt architecture.
 
@@ -237,18 +228,16 @@ HILS mitigates LLM variation via a highly deterministic, programmatic prompt arc
 - **Context Injection:** Injects strictly the VTU subject, module name, and topic, drastically reducing the dataset available for hallucination.
 - **Dynamic Scale Adjustments:** Programmatically expands generation structures (diagram placeholders, detailed examples) strictly based on parameterized marks requirements.
 
----
-
-## Future Roadmap
+# Future roadmap
+[(Back to top)](#table-of-contents)
 
 - **Geographic University Expansion:** Map adjacent state universities into the core data schema.
 - **Weak-Area Algorithmic Detection:** Track quiz scores internally to isolate and flag failing learning modules.
 - **Adaptive Revision Timelines:** Generate chronological study plans converging exactly on projected exam dates.
 - **Memory-Based Reinforcement:** Introduce active recall techniques linked directly to cached LLM responses.
 
----
-
-## Security & Data Policy
+# Security & data policy
+[(Back to top)](#table-of-contents)
 
 HILS executes a rigid, zero-fluff data policy to assure privacy.
 
@@ -256,9 +245,8 @@ HILS executes a rigid, zero-fluff data policy to assure privacy.
 - **Anonymized Processing:** LLM interactions pass no user-identifying markers into external training pools. 
 - **Isolated JWT Validation:** All backend pathways demand strictly enforced token authorization checks prior to execution.
 
----
-
-## Installation & Deployment Guide
+# Installation & deployment guide
+[(Back to top)](#table-of-contents)
 
 ### Prerequisites
 - Node.js >= 18.0.0
@@ -307,18 +295,16 @@ Deployments are handled entirely through Firebase architecture.
 firebase deploy
 ```
 
----
-
-## Use Cases
+# Use cases
+[(Back to top)](#table-of-contents)
 
 - **Targeted Exam Preparation:** Decoding dense algorithmic topics hours before an examination utilizing precise "Planner" bounds.
 - **Cheat-Sheet Synthesis:** Utilizing "Rapid Revision" prompts to compress entire textbook chapters into sub-4-page structures.
 - **Institutional Implementation:** Coaching centers pulling strictly VTU-aligned materials directly from structured outputs without manual formatting overhead.
 - **Platform Integration:** Exporting deterministic JSON parameters via backend pathways for integration into external revision dashboards.
 
----
-
-## Contact & Support
+# Contact & support
+[(Back to top)](#table-of-contents)
 
 ### Project Information
 - **Developer**: Omkar Shirvalkar
