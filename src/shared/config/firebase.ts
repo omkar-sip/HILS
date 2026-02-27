@@ -13,10 +13,25 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
-const app = initializeApp(firebaseConfig)
+let app;
+let auth;
+let db;
+let functions;
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export const functions = getFunctions(app)
+try {
+    app = initializeApp(firebaseConfig)
+    auth = getAuth(app)
+    db = getFirestore(app)
+    functions = getFunctions(app)
+} catch (error: any) {
+    console.error("FIREBASE INIT FAILED:", error);
+    if (typeof document !== 'undefined') {
+        document.body.innerHTML = `<div style="color:red; margin:20px; font-family:monospace">
+            <h1>Firebase Init Failed</h1>
+            <p>${error.message}</p>
+            <p>API Key defined: ${!!firebaseConfig.apiKey}</p>
+        </div>`;
+    }
+}
 
-export default app
+export { app as default, auth, db, functions }
