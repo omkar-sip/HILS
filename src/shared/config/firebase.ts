@@ -26,10 +26,17 @@ try {
 } catch (error: any) {
     console.error("FIREBASE INIT FAILED:", error);
     if (typeof document !== 'undefined') {
+        const key = firebaseConfig.apiKey;
+        const keyDesc = typeof key === 'string'
+            ? `String (length: ${key.length}, starts with: ${key.substring(0, 3)}..., ends with: ${key.substring(key.length - 3)})`
+            : typeof key;
+
         document.body.innerHTML = `<div style="color:red; margin:20px; font-family:monospace">
             <h1>Firebase Init Failed</h1>
             <p>${error.message}</p>
             <p>API Key defined: ${!!firebaseConfig.apiKey}</p>
+            <p>API Key Details: ${keyDesc}</p>
+            <p>Project ID: ${firebaseConfig.projectId || 'undefined'}</p>
         </div>`;
     }
 }
