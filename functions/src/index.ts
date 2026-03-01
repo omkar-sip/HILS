@@ -1,9 +1,10 @@
+import * as functions from "firebase-functions";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { buildPrompt } from "./services/promptBuilder";
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(functions.config().gemini?.api_key || process.env.GEMINI_API_KEY || "");
 
 interface ExplanationRequest {
     topicId: string;
@@ -103,6 +104,48 @@ export const generateExplanation = onCall<ExplanationRequest>(
         } catch (error) {
             console.error("Gemini API Error:", error);
             throw new HttpsError("internal", "Failed to generate explanation.");
+        }
+    }
+);
+
+interface ProxyGeminiRequest {
+    prompt: string;
+    maxOutputTokens: number;
+    isRawTextMode: boolean;
+}
+
+export const proxyGeminiCall = onCall<ProxyGeminiRequest>(
+    {
+        maxInstances: 10,
+        timeoutSeconds: 60,
+        cors: true,
+    },
+    async (request) => {
+        // 1. Validate auth to prevent abuse
+        if (!request.auth) {
+            throw new HttpsError("unauthenticated", "User must be authenticated to use AI services.");
+        }
+
+        const { prompt, maxOutputTokens, isRawTextMode } = request.data;
+
+        if (!prompt) {
+            throw new HttpsError("invalid-argument", "Prompt is required.");
+        }
+
+        try {
+            const model = genAI.getGenerativeModel({
+                model: "gemini-2.5-flash",
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: maxOutputTokens || 4096,
+                    responseMimeType: isRawTextMode ? 'text/plain' : 'application/json',
+                }
+            });
+            const result = await model.generateContent(prompt);
+            return { text: result.response.text() };
+        } catch (error) {
+            console.error("Gemini Proxy API Error:", error);
+            throw new HttpsError("internal", "Failed to generate AI response via proxy.");
         }
     }
 );

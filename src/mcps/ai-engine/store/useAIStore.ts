@@ -68,11 +68,11 @@ export const useAIStore = create<AIStore>((set, get) => ({
 
         set({ isLoading: true, loadingMode: payload.mode, error: null, response: null, _abortController: controller })
         try {
-            const result = await aiService.fetchExplanation(payload, controller.signal)
+            const response = await aiService.fetchExplanation(payload)
             // Only update if this request wasn't aborted
             if (!controller.signal.aborted) {
-                get().cacheResponse(cacheKey, result)
-                set({ response: result, isLoading: false, loadingMode: null, error: null, _abortController: null })
+                get().cacheResponse(cacheKey, response)
+                set({ response: response, isLoading: false, loadingMode: null, error: null, _abortController: null })
             }
         } catch (err) {
             if (err instanceof DOMException && err.name === 'AbortError') {
