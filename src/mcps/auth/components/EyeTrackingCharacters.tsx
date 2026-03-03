@@ -158,9 +158,12 @@ export default function EyeTrackingCharacters({ mousePos, focusedField }: EyeTra
 
     // Compute target for eyes: either the mouse or a "look down" position when input is focused
     const getTarget = useCallback(() => {
-        if (focusedField) {
-            // When a field is focused, characters look to the right and down (toward the form)
-            return { x: 600, y: 500 }
+        if (focusedField === 'password') {
+            // Looking away (up and left) to convey privacy
+            return { x: -200, y: -200 }
+        } else if (focusedField) {
+            // Look right toward the email input block (straight across)
+            return { x: 500, y: 150 }
         }
 
         if (!svgRef.current) return { x: 250, y: 250 }

@@ -103,7 +103,7 @@ export default function LandingPage() {
                             { label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
                             { label: 'Features', action: () => scrollTo(featuresRef) },
                             { label: 'How It Works', action: () => scrollTo(howItWorksRef) },
-                            { label: 'Pricing', action: () => { } },
+                            { label: 'Pricing', action: null, to: '/pricing' },
                             ...(isAuthenticated && user?.emailVerified !== false
                                 ? [{ label: 'Dashboard', action: null, to: '/dashboard' }]
                                 : []),

@@ -4,13 +4,11 @@
  */
 import type { AIRequestPayload, AIResponse, LearningMode } from '../types/ai.types'
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+import { getFunctions, httpsCallable } from 'firebase/functions'
+import app from '../../../shared/config/firebase'
 
-function getApiKey(): string {
-    const key = import.meta.env.VITE_GEMINI_API_KEY
-    if (!key) throw new Error('VITE_GEMINI_API_KEY is not set in .env')
-    return key
-}
+const functions = getFunctions(app)
+const proxyGeminiCall = httpsCallable(functions, 'proxyGeminiCall')
 
 /**
  * Per-mode token limits to stay within cost / output-length guardrails.
@@ -405,74 +403,64 @@ Respond ONLY with valid JSON, no markdown fences.`
 }
 
 export const aiService = {
-    async fetchExplanation(payload: AIRequestPayload, signal?: AbortSignal): Promise<AIResponse> {
-        const apiKey = getApiKey()
+    async fetchExplanation(payload: AIRequestPayload): Promise<AIResponse> {
         const prompt = buildPrompt(payload)
         const maxOutputTokens = MODE_TOKEN_LIMITS[payload.mode] ?? 4096
 
         const isRawTextMode = payload.mode === 'planner' || payload.mode === 'explain_v2' || payload.mode === 'exam_answer'
 
-        const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            signal,
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens,
-                    responseMimeType: isRawTextMode ? 'text/plain' : 'application/json',
-                },
-            }),
-        })
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}))
-            const msg = (errorData as { error?: { message?: string } })?.error?.message || response.statusText
-            throw new Error(`Gemini API error: ${msg}`)
-        }
-
-        const data = await response.json()
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text
-
-        if (!text) throw new Error('Empty response from Gemini API')
-
-        if (isRawTextMode) {
-            // For text-only modes, put all content in the explanation field
-            return {
-                explanation: text,
-                analogy: '',
-                example: '',
-                examQuestion: '',
-                summary: '',
-                sections: [],
-                generatedAt: Date.now(),
-            }
-        }
-
         try {
-            // Parse the JSON response for legacy modes
-            const parsed = JSON.parse(text) as Record<string, string>
-            return {
-                explanation: parsed.explanation || '',
-                analogy: parsed.analogy || '',
-                example: parsed.example || '',
-                examQuestion: parsed.examQuestion || '',
-                summary: parsed.summary || '',
-                sections: [],
-                generatedAt: Date.now(),
+            const result = await proxyGeminiCall({
+                prompt,
+                maxOutputTokens,
+                isRawTextMode
+            })
+
+            const data = result.data as { text: string };
+            const text = data.text;
+
+            if (!text) throw new Error('Empty response from Gemini Proxy API')
+
+            if (isRawTextMode) {
+                // For text-only modes, put all content in the explanation field
+                return {
+                    explanation: text,
+                    analogy: '',
+                    example: '',
+                    examQuestion: '',
+                    summary: '',
+                    sections: [],
+                    generatedAt: Date.now(),
+                }
             }
-        } catch {
-            // If JSON parsing fails, treat entire text as explanation
-            return {
-                explanation: text,
-                analogy: '',
-                example: '',
-                examQuestion: '',
-                summary: '',
-                sections: [],
-                generatedAt: Date.now(),
+
+            try {
+                // Parse the JSON response for legacy modes
+                const parsed = JSON.parse(text) as Record<string, string>
+                return {
+                    explanation: parsed.explanation || '',
+                    analogy: parsed.analogy || '',
+                    example: parsed.example || '',
+                    examQuestion: parsed.examQuestion || '',
+                    summary: parsed.summary || '',
+                    sections: [],
+                    generatedAt: Date.now(),
+                }
+            } catch {
+                // If JSON parsing fails, treat entire text as explanation
+                return {
+                    explanation: text,
+                    analogy: '',
+                    example: '',
+                    examQuestion: '',
+                    summary: '',
+                    sections: [],
+                    generatedAt: Date.now(),
+                }
             }
+        } catch (error: any) {
+            console.error("Error calling Gemini proxy:", error)
+            throw new Error(`AI Service Error: Unable to generate a response at this time. Please try again later.`)
         }
     },
 }
