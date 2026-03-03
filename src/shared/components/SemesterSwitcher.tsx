@@ -37,9 +37,9 @@ export default function SemesterSwitcher() {
         <div ref={ref} className="relative">
             <button
                 onClick={() => setOpen(o => !o)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hils-card border border-hils-border text-sm text-hils-text hover:border-white/20 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-hils-card border border-hils-border text-sm text-hils-text hover:border-white/20 transition-colors"
             >
-                <span className="text-hils-text-muted text-xs">Semester:</span>
+                <span className="text-hils-text-muted text-xs hidden sm:inline">Semester:</span>
                 <span className="font-medium">{SEMESTER_LABELS[current]}</span>
                 <ChevronDown className={`w-3.5 h-3.5 text-hils-text-dim transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>

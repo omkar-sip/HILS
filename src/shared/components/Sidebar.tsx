@@ -7,9 +7,14 @@ import {
 import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
 import { useUserProfileStore } from '@/mcps/user-profile/store/useUserProfileStore'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-export default function Sidebar() {
+interface SidebarProps {
+    mobileOpen?: boolean
+    setMobileOpen?: (open: boolean) => void
+}
+
+export default function Sidebar({ mobileOpen = false, setMobileOpen }: SidebarProps) {
     const { user, logout } = useAuthStore()
     const { activePersona } = usePersonaStore()
     const { userProfile } = useUserProfileStore()
@@ -21,6 +26,17 @@ export default function Sidebar() {
         navigate('/login')
     }
 
+    // Close on resize if crossing md breakpoint
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 768 && setMobileOpen) {
+                setMobileOpen(false)
+            }
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [setMobileOpen])
+
     const displayName = userProfile?.fullName || user?.displayName || 'Student'
     const displayEmail = userProfile?.email || user?.email || ''
     const initials = displayName.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -30,103 +46,124 @@ export default function Sidebar() {
     ]
 
     return (
-        <motion.aside
-            initial={false}
-            animate={{ width: collapsed ? 64 : 240 }}
-            transition={{ duration: 0.2 }}
-            className="h-screen bg-hils-surface border-r border-hils-border flex flex-col sticky top-0"
-        >
-            {/* Brand */}
-            <div className="p-4 flex items-center justify-between border-b border-hils-border">
-                {!collapsed && (
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-4 h-4 text-black" />
-                        </div>
-                        <span className="text-sm font-bold text-hils-text tracking-tight">HILS</span>
-                    </div>
-                )}
-                <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    className="p-1.5 rounded-lg hover:bg-hils-card transition-colors"
-                >
-                    <ChevronLeft className={`w-4 h-4 text-hils-text-dim transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`} />
-                </button>
-            </div>
+        <>
+            {/* Mobile Backdrop */}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setMobileOpen?.(false)}
+                />
+            )}
 
-            {/* Nav Items */}
-            <nav className="flex-1 p-3 space-y-1">
-                {navItems.map((item) => (
-                    <NavLink
-                        key={item.to}
-                        to={item.to}
-                        className={({ isActive }) =>
-                            `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
-              ${isActive
-                                ? 'bg-white/[0.08] text-white border border-white/[0.12]'
-                                : 'text-hils-text-muted hover:text-hils-text hover:bg-hils-card border border-transparent'
-                            }`
-                        }
-                    >
-                        <item.icon className="w-4 h-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.label}</span>}
-                    </NavLink>
-                ))}
-            </nav>
-
-            {/* Active Persona */}
-            {!collapsed && (
-                <div className="px-3 mb-2">
-                    <div className="glass-card p-3">
+            <motion.aside
+                initial={false}
+                animate={{ width: collapsed ? 64 : 240 }}
+                transition={{ duration: 0.2 }}
+                className={`fixed md:sticky top-0 h-screen bg-hils-surface border-r border-hils-border flex flex-col z-50 transition-transform duration-300 md:translate-x-0
+                    ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+                `}
+            >
+                {/* Brand */}
+                <div className="p-4 flex items-center justify-between border-b border-hils-border">
+                    {!collapsed && (
                         <div className="flex items-center gap-2">
-                            <span className="text-lg">{activePersona.emoji}</span>
-                            <div className="min-w-0">
-                                <p className="text-xs font-medium text-hils-text truncate">{activePersona.name}</p>
-                                <p className="text-xs text-hils-text-dim truncate">{activePersona.style}</p>
+                            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                                <Sparkles className="w-4 h-4 text-black" />
+                            </div>
+                            <span className="text-sm font-bold text-hils-text tracking-tight">HILS</span>
+                        </div>
+                    )}
+                    {/* Desktop Collapse Button */}
+                    <button
+                        onClick={() => setCollapsed(!collapsed)}
+                        className="hidden md:block p-1.5 rounded-lg hover:bg-hils-card transition-colors"
+                    >
+                        <ChevronLeft className={`w-4 h-4 text-hils-text-dim transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`} />
+                    </button>
+                    {/* Mobile Close Button */}
+                    <button
+                        onClick={() => setMobileOpen?.(false)}
+                        className="md:hidden p-1.5 rounded-lg hover:bg-hils-card transition-colors"
+                    >
+                        <ChevronLeft className="w-5 h-5 text-hils-text-dim transition-transform duration-200" />
+                    </button>
+                </div>
+
+                {/* Nav Items */}
+                <nav className="flex-1 p-3 space-y-1">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            onClick={() => setMobileOpen?.(false)}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+              ${isActive
+                                    ? 'bg-white/[0.08] text-white border border-white/[0.12]'
+                                    : 'text-hils-text-muted hover:text-hils-text hover:bg-hils-card border border-transparent'
+                                }`
+                            }
+                        >
+                            <item.icon className="w-4 h-4 flex-shrink-0" />
+                            {!collapsed && <span>{item.label}</span>}
+                        </NavLink>
+                    ))}
+                </nav>
+
+                {/* Active Persona */}
+                {!collapsed && (
+                    <div className="px-3 mb-2">
+                        <div className="glass-card p-3">
+                            <div className="flex items-center gap-2">
+                                <span className="text-lg">{activePersona.emoji}</span>
+                                <div className="min-w-0">
+                                    <p className="text-xs font-medium text-hils-text truncate">{activePersona.name}</p>
+                                    <p className="text-xs text-hils-text-dim truncate">{activePersona.style}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {/* User / Profile / Logout */}
-            <div className="p-3 border-t border-hils-border">
-                {/* Avatar row — clickable → goes to /profile */}
-                <button
-                    onClick={() => navigate('/profile')}
-                    className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-hils-card transition-colors group"
-                    title="View Profile"
-                >
-                    <div className="w-8 h-8 rounded-full bg-hils-card border border-hils-border flex items-center justify-center flex-shrink-0 group-hover:border-white/20 transition-colors">
-                        <span className="text-xs font-bold text-hils-text">{initials || '?'}</span>
-                    </div>
-                    {!collapsed && (
-                        <div className="flex-1 min-w-0 text-left">
-                            <p className="text-sm font-medium text-hils-text truncate">{displayName}</p>
-                            <p className="text-xs text-hils-text-dim truncate">{displayEmail}</p>
-                        </div>
-                    )}
-                </button>
-
-                {/* Settings + Logout row */}
-                <div className={`flex items-center mt-1 gap-1 ${collapsed ? 'flex-col' : ''}`}>
+                {/* User / Profile / Logout */}
+                <div className="p-3 border-t border-hils-border">
+                    {/* Avatar row — clickable → goes to /profile */}
                     <button
                         onClick={() => navigate('/profile')}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-text transition-colors text-xs"
-                        title="Profile & Settings"
+                        className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-hils-card transition-colors group"
+                        title="View Profile"
                     >
-                        <Settings className="w-3.5 h-3.5" />
-                        {!collapsed && <span>Settings</span>}
+                        <div className="w-8 h-8 rounded-full bg-hils-card border border-hils-border flex items-center justify-center flex-shrink-0 group-hover:border-white/20 transition-colors">
+                            <span className="text-xs font-bold text-hils-text">{initials || '?'}</span>
+                        </div>
+                        {!collapsed && (
+                            <div className="flex-1 min-w-0 text-left">
+                                <p className="text-sm font-medium text-hils-text truncate">{displayName}</p>
+                                <p className="text-xs text-hils-text-dim truncate">{displayEmail}</p>
+                            </div>
+                        )}
                     </button>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-danger transition-colors"
-                        title="Sign Out"
-                    >
-                        <LogOut className="w-4 h-4" />
-                    </button>
+
+                    {/* Settings + Logout row */}
+                    <div className={`flex items-center mt-1 gap-1 ${collapsed ? 'flex-col' : ''}`}>
+                        <button
+                            onClick={() => navigate('/profile')}
+                            className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-text transition-colors text-xs"
+                            title="Profile & Settings"
+                        >
+                            <Settings className="w-3.5 h-3.5" />
+                            {!collapsed && <span>Settings</span>}
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center justify-center p-1.5 rounded-lg hover:bg-hils-card text-hils-text-dim hover:text-hils-danger transition-colors"
+                            title="Sign Out"
+                        >
+                            <LogOut className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </motion.aside>
+            </motion.aside>
+        </>
     )
 }

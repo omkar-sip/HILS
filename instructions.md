@@ -50,16 +50,17 @@ Frontend:
 - Zustand for state management
 - Tailwind CSS for styling
 - No business logic inside UI components
+- **Zero API Keys in the frontend `.env` (Strict Requirement)**
 
 Backend:
-- Firebase Functions
-- All AI calls server-side
-- No API keys in frontend
+- Firebase Functions (v2)
+- Server-side proxy for all Gemini API calls (`proxyGeminiCall`)
+- Secure environment configuration (`functions/.env` and `firebase functions:config`)
 
 AI Interface Flow:
-Frontend → Firebase Function → Prompt Builder → Gemini API → Structured Response → Frontend Renderer
+Frontend `aiService` → `httpsCallable` proxy → Firebase Function → `@google/generative-ai` SDK → Structured Response → Frontend Renderer
 
-Keep the pipeline clean.
+Keep the pipeline clean and absolutely secure.
 
 ---
 
@@ -102,16 +103,16 @@ Structured input → Structured output.
 
 ## Step 2 – AI Call Pipeline
 
-Firebase Function flow:
+Firebase Function flow (`proxyGeminiCall`):
 
-1. Validate user token
-2. Fetch persona
-3. Fetch syllabus context
-4. Build prompt
-5. Call Gemini API
-6. Return structured JSON
+1. Validate user authentication context (`request.auth`)
+2. Verify API Key is present in backend environment
+3. Accept payload (prompt, parameters) from frontend
+4. Call Gemini API securely via `@google/generative-ai`
+5. Return structured JSON back to the frontend
+6. Handle quotas and catch technical errors (masking them from the user)
 
-Never return raw text blobs.
+Never return raw text blobs or expose raw API errors to the user.
 
 ---
 
@@ -227,13 +228,15 @@ This prevents spaghetti architecture.
    Memoization  
    Avoid unnecessary renders  
 
-4. UX Micro-Optimization  
-   Subtle animations  
-   Immediate feedback  
-   Intentional spacing  
+4. UX Micro-Optimization & Delight
+   Subtle animations (Framer Motion)
+   Immediate feedback
+   Intentional spacing
+   **Thematic Security:** Use visual cues (e.g., characters looking away during password entry) to convey trust without heavy copy.
 
 5. AI Guardrails  
    Validate structured AI responses before rendering.
+   Mask technical errors with user-friendly "System Error" messages.
 
 ---
 

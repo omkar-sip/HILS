@@ -142,7 +142,7 @@ export default function TopicPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto p-4 md:p-6">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 mb-6 text-xs text-hils-text-muted overflow-x-auto whitespace-nowrap pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {[
@@ -178,15 +178,15 @@ export default function TopicPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-6"
             >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-hils-text mb-2">{topic.name}</h1>
+                        <h1 className="text-xl md:text-2xl font-bold text-hils-text mb-1 md:mb-2 leading-tight md:leading-normal">{topic.name}</h1>
                         {topic.description && (
-                            <p className="text-sm text-hils-text-muted">{topic.description}</p>
+                            <p className="text-xs md:text-sm text-hils-text-muted">{topic.description}</p>
                         )}
                     </div>
                     {completed && (
-                        <span className="flex items-center gap-1.5 text-hils-success text-sm font-medium shrink-0">
+                        <span className="flex items-center gap-1.5 text-hils-success text-xs md:text-sm font-medium shrink-0 mb-1 sm:mb-0">
                             <CheckCircle2 className="w-4 h-4" />
                             Completed
                         </span>
@@ -205,11 +205,13 @@ export default function TopicPage() {
             </motion.div>
 
             {/* Controls Row */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-                <PersonaSelector />
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                <div className="flex-shrink-0">
+                    <PersonaSelector />
+                </div>
 
                 {/* Mode Switcher */}
-                <div className="flex items-center bg-hils-surface border border-hils-border rounded-lg p-1">
+                <div className="flex items-center bg-hils-surface border border-hils-border rounded-lg p-1 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full sm:w-auto">
                     {modeOptions.map(({ mode, label, icon: Icon }) => (
                         <button
                             key={mode}
@@ -283,35 +285,37 @@ export default function TopicPage() {
             </div>
 
             {/* Mark Complete + Navigation */}
-            <div className="flex items-center justify-between border-t border-hils-border pt-6">
-                <div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between border-t border-hils-border pt-6 gap-3 sm:gap-0">
+                <div className="order-2 sm:order-1 flex justify-start">
                     {prevTopic ? (
                         <button
                             onClick={() => navigate(`/topic/${prevTopic.id}`)}
-                            className="btn-secondary flex items-center gap-2 text-sm"
+                            className="btn-secondary flex items-center justify-center gap-2 text-sm w-full sm:w-auto"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" />
-                            {prevTopic.name}
+                            <span className="truncate max-w-[120px]">{prevTopic.name}</span>
                         </button>
                     ) : (
                         <div />
                     )}
                 </div>
 
-                {!completed && (
-                    <button onClick={handleMarkComplete} className="btn-primary flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="w-4 h-4" />
-                        Mark Complete
-                    </button>
-                )}
+                <div className="order-1 sm:order-2 flex justify-center">
+                    {!completed && (
+                        <button onClick={handleMarkComplete} className="btn-primary flex items-center justify-center gap-2 text-sm w-full sm:w-auto">
+                            <CheckCircle2 className="w-4 h-4" />
+                            Mark Complete
+                        </button>
+                    )}
+                </div>
 
-                <div>
+                <div className="order-3 sm:order-3 flex justify-end">
                     {nextTopic ? (
                         <button
                             onClick={() => navigate(`/topic/${nextTopic.id}`)}
-                            className="btn-secondary flex items-center gap-2 text-sm"
+                            className="btn-secondary flex items-center justify-center gap-2 text-sm w-full sm:w-auto"
                         >
-                            {nextTopic.name}
+                            <span className="truncate max-w-[120px]">{nextTopic.name}</span>
                             <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                     ) : (

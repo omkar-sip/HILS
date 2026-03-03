@@ -6,7 +6,7 @@ import {
     BarChart3, Users, Zap, GraduationCap, MessageSquare,
     ChevronRight, Github, Linkedin, Twitter, Send,
     AlertTriangle, Library, Lightbulb, Globe, Cpu, Clock,
-    BookMarked, Rocket, Shield
+    BookMarked, Rocket, Shield, Menu, X
 } from 'lucide-react'
 import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
 import ParticleBackground from '@/shared/components/ParticleBackground'
@@ -76,12 +76,24 @@ function RotateWords() {
 
 export default function LandingPage() {
     const { isAuthenticated, user } = useAuthStore()
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const featuresRef = useRef<HTMLDivElement>(null)
     const howItWorksRef = useRef<HTMLDivElement>(null)
 
     const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
+        setIsMobileMenuOpen(false)
         ref.current?.scrollIntoView({ behavior: 'smooth' })
     }
+
+    const navLinks = [
+        { label: 'Home', action: () => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) } },
+        { label: 'Features', action: () => scrollTo(featuresRef) },
+        { label: 'How It Works', action: () => scrollTo(howItWorksRef) },
+        { label: 'Pricing', action: null, to: '/pricing' },
+        ...(isAuthenticated && user?.emailVerified !== false
+            ? [{ label: 'Dashboard', action: null, to: '/dashboard' }]
+            : []),
+    ]
 
     return (
         <div className="min-h-screen bg-hils-bg text-hils-text overflow-x-hidden">
@@ -99,15 +111,7 @@ export default function LandingPage() {
                     </Link>
 
                     <div className="hidden md:flex items-center gap-1">
-                        {[
-                            { label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-                            { label: 'Features', action: () => scrollTo(featuresRef) },
-                            { label: 'How It Works', action: () => scrollTo(howItWorksRef) },
-                            { label: 'Pricing', action: null, to: '/pricing' },
-                            ...(isAuthenticated && user?.emailVerified !== false
-                                ? [{ label: 'Dashboard', action: null, to: '/dashboard' }]
-                                : []),
-                        ].map((item) =>
+                        {navLinks.map((item) =>
                             item.to ? (
                                 <Link
                                     key={item.label}
@@ -128,7 +132,15 @@ export default function LandingPage() {
                         )}
                     </div>
 
-                    <div>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        {/* Mobile Menu Toggle Button */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="md:hidden p-2 -ml-2 rounded-lg hover:bg-white/[0.04] text-hils-text-muted hover:text-white transition-colors"
+                        >
+                            <Menu className="w-6 h-6" />
+                        </button>
+
                         {isAuthenticated ? (
                             <Link to="/dashboard" className="btn-primary text-sm flex items-center gap-1.5">
                                 Dashboard <ArrowRight className="w-3.5 h-3.5" />
@@ -141,6 +153,74 @@ export default function LandingPage() {
                     </div>
                 </div>
             </nav>
+
+            {/* ═══════════════════════════════════════════ */}
+            {/* MOBILE NAVIGATION DRAWER                    */}
+            {/* ═══════════════════════════════════════════ */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="fixed top-0 right-0 h-[100dvh] w-64 bg-hils-surface border-l border-hils-border shadow-2xl z-[70] md:hidden flex flex-col"
+                        >
+                            <div className="flex items-center justify-between p-6 border-b border-hils-border/50">
+                                <span className="text-lg font-bold tracking-tight">Menu</span>
+                                <button
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="p-2 -mr-2 rounded-lg hover:bg-white/[0.04] text-hils-text-muted hover:text-white transition-colors"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <div className="flex flex-col p-4 gap-2">
+                                {navLinks.map((item) =>
+                                    item.to ? (
+                                        <Link
+                                            key={item.label}
+                                            to={item.to}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="px-4 py-3 text-base font-medium text-hils-text-muted hover:text-white rounded-lg hover:bg-white/[0.04] transition-colors"
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            key={item.label}
+                                            onClick={item.action ?? undefined}
+                                            className="px-4 py-3 text-base font-medium text-hils-text-muted hover:text-white text-left rounded-lg hover:bg-white/[0.04] transition-colors"
+                                        >
+                                            {item.label}
+                                        </button>
+                                    )
+                                )}
+                            </div>
+                            <div className="mt-auto p-6 border-t border-hils-border/50">
+                                {isAuthenticated ? (
+                                    <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary w-full justify-center flex items-center gap-1.5">
+                                        Dashboard <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                ) : (
+                                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary w-full justify-center flex items-center gap-1.5">
+                                        Login <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* ═══════════════════════════════════════════ */}
             {/* 2 HERO SECTION                              */}

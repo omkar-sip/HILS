@@ -21,7 +21,7 @@ function SetupNotification({ onDismiss, onSetup }: { onDismiss: () => void; onSe
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.25 }}
-            className="fixed bottom-6 right-6 z-50 w-80 glass-card border border-white/10 p-4 shadow-2xl"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-80 glass-card border border-white/10 p-4 shadow-2xl"
         >
             <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -75,10 +75,10 @@ function WelcomeScreen({ onSetup }: { onSetup: () => void }) {
                     </div>
                 </div>
 
-                <h1 className="text-3xl font-bold text-hils-text mb-2">
+                <h1 className="text-2xl md:text-3xl font-bold text-hils-text mb-2">
                     Welcome, {firstName} 👋
                 </h1>
-                <p className="text-hils-text-muted max-w-sm mx-auto mb-2 leading-relaxed">
+                <p className="text-hils-text-muted max-w-sm mx-auto mb-2 leading-relaxed text-sm md:text-base">
                     HILS helps you master your VTU syllabus with AI-powered explanations.
                 </p>
                 <p className="text-hils-text-dim text-sm mb-10">
@@ -86,7 +86,7 @@ function WelcomeScreen({ onSetup }: { onSetup: () => void }) {
                 </p>
 
                 {/* Stats preview cards */}
-                <div className="flex items-center justify-center gap-3 mb-10">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 w-full">
                     {[
                         { label: 'Subjects', value: '8+' },
                         { label: 'Modules', value: '40+' },
@@ -205,17 +205,17 @@ export default function DashboardPage() {
 
             {/* Academic profile exists — subject/module/topic grid */}
             {hasAcademicProfile && (
-                <div className="p-6 max-w-6xl mx-auto">
+                <div className="p-4 md:p-6 max-w-6xl mx-auto">
 
                     {/* Continue banner */}
                     {lastTopic && viewLevel === 'subjects' && (
                         <motion.div
                             initial={{ opacity: 0, y: -6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mb-6 glass-card p-4 flex items-center justify-between gap-3 border border-white/10 group cursor-pointer"
+                            className="mb-6 glass-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border border-white/10 group cursor-pointer"
                             onClick={() => navigate(`/topic/${lastTopic.topicId}`)}
                         >
-                            <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex items-start sm:items-center gap-3 min-w-0">
                                 <div className="p-2 rounded-lg bg-white/[0.06] flex-shrink-0">
                                     <Zap className="w-4 h-4 text-hils-accent-light" />
                                 </div>
@@ -225,7 +225,9 @@ export default function DashboardPage() {
                                     <p className="text-xs text-hils-text-dim truncate">{lastTopic.subjectCode} · {lastTopic.module}</p>
                                 </div>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-hils-text-dim group-hover:text-hils-accent-light transition-colors flex-shrink-0" />
+                            <div className="flex justify-end sm:block">
+                                <ArrowRight className="w-4 h-4 text-hils-text-dim group-hover:text-hils-accent-light transition-colors flex-shrink-0" />
+                            </div>
                         </motion.div>
                     )}
 
