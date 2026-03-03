@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     BookOpen, ChevronRight, Layers, CheckCircle2, Circle,
-    ArrowRight, Zap, GraduationCap, Bell, X, Sparkles
+    ArrowRight, Zap, GraduationCap, Bell, X, Sparkles, Search
 } from 'lucide-react'
 import { vtuSyllabus } from '@/shared/data/vtuSyllabus'
 import { useProgressStore } from '@/mcps/progress/store/useProgressStore'
@@ -126,6 +126,7 @@ export default function DashboardPage() {
     const [currentSubject, setCurrentSubject] = useState<string | null>(null)
     const [currentModule, setCurrentModule] = useState<string | null>(null)
     const [popupDismissed, setPopupDismissed] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
 
     // ── Resolve display names from IDs ────────────────────────────────────────
     const names = useMemo(() => resolveAcademicNames(profile), [profile])
@@ -206,6 +207,44 @@ export default function DashboardPage() {
             {/* Academic profile exists — subject/module/topic grid */}
             {hasAcademicProfile && (
                 <div className="p-4 md:p-6 max-w-6xl mx-auto">
+
+                    {/* Quick Query Omni-Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-8 relative"
+                    >
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            if (searchQuery.trim()) {
+                                navigate(`/topic/custom?q=${encodeURIComponent(searchQuery)}`);
+                            }
+                        }}>
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-hils-accent/20 blur-xl rounded-2xl group-hover:bg-hils-accent/30 transition-all"></div>
+                                <div className="relative flex items-center bg-hils-surface border-2 border-hils-border hover:border-hils-accent/50 rounded-2xl p-2 transition-colors shadow-2xl">
+                                    <div className="pl-4 pr-3 text-hils-text-dim">
+                                        <Search className="w-5 h-5 md:w-6 md:h-6 text-hils-accent-light" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Paste your PYQ or rapid query here for instant exam answers..."
+                                        className="flex-1 bg-transparent border-none outline-none text-hils-text text-sm md:text-base py-3 focus:ring-0 placeholder:text-hils-text-muted"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={!searchQuery.trim()}
+                                        className="btn-primary ml-2 py-2 md:py-3 px-4 md:px-6 rounded-xl text-sm font-bold flex items-center gap-2"
+                                    >
+                                        <Zap className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Fast-Track</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </motion.div>
 
                     {/* Continue banner */}
                     {lastTopic && viewLevel === 'subjects' && (

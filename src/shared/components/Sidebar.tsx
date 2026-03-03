@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
     LayoutDashboard, LogOut, Sparkles,
-    ChevronLeft, Settings
+    ChevronLeft, Settings, BookOpen
 } from 'lucide-react'
 import { useAuthStore } from '@/mcps/auth/store/useAuthStore'
 import { usePersonaStore } from '@/mcps/persona/store/usePersonaStore'
@@ -43,6 +43,7 @@ export default function Sidebar({ mobileOpen = false, setMobileOpen }: SidebarPr
 
     const navItems = [
         { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { to: '/binder', label: 'Study Binder', icon: BookOpen },
     ]
 
     return (

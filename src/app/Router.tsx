@@ -8,6 +8,7 @@ import VerifyEmailPage from '@/mcps/auth/components/VerifyEmailPage'
 import DashboardPage from '@/pages/DashboardPage'
 import TopicPage from '@/pages/TopicPage'
 import ProfilePage from '@/pages/ProfilePage'
+import StudyBinderPage from '@/pages/StudyBinderPage'
 import AcademicSetupWizard from '@/mcps/academic-profile/components/AcademicSetupWizard'
 import MainLayout from './layouts/MainLayout'
 import ProtectedRoute from '@/shared/components/ProtectedRoute'
@@ -48,6 +49,7 @@ export default function Router() {
                     <Route path="/subject/:subjectCode" element={<DashboardPage />} />
                     <Route path="/subject/:subjectCode/module/:moduleId" element={<DashboardPage />} />
                     <Route path="/topic/:topicId" element={<TopicPage />} />
+                    <Route path="/binder" element={<StudyBinderPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                 </Route>
 

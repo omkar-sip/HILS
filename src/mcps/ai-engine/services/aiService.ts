@@ -215,10 +215,10 @@ Use strict academic, point-wise format.
 
 Context:
 - University: VTU
-- Semester: {semester}
-- Subject: {subject}
-- Module: {module}
-- Question: {user_question}
+- Subject: ${subjectName}
+- Module: ${moduleName}
+- Question / Topic: ${topicName}
+${syllabusContext ? `- Additional Context: ${syllabusContext}` : ''}
 - Marks: Infer 5M or 10M from wording.
 
 GOAL:

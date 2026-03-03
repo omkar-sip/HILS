@@ -1,10 +1,9 @@
-import * as functions from "firebase-functions";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { buildPrompt } from "./services/promptBuilder";
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(functions.config().gemini?.api_key || process.env.GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 interface ExplanationRequest {
     topicId: string;
@@ -36,6 +35,7 @@ export const generateExplanation = onCall<ExplanationRequest>(
         maxInstances: 10,
         timeoutSeconds: 60,
         cors: true,
+        invoker: "public",
     },
     async (request) => {
         // 1. Validate auth
@@ -109,9 +109,9 @@ export const generateExplanation = onCall<ExplanationRequest>(
 );
 
 interface ProxyGeminiRequest {
-    prompt: string;
-    maxOutputTokens: number;
-    isRawTextMode: boolean;
+    prompt: any; // Can be string or array for multimodal
+    maxOutputTokens?: number;
+    isRawTextMode?: boolean;
 }
 
 export const proxyGeminiCall = onCall<ProxyGeminiRequest>(
@@ -119,6 +119,7 @@ export const proxyGeminiCall = onCall<ProxyGeminiRequest>(
         maxInstances: 10,
         timeoutSeconds: 60,
         cors: true,
+        invoker: "public",
     },
     async (request) => {
         // 1. Validate auth to prevent abuse
@@ -149,3 +150,6 @@ export const proxyGeminiCall = onCall<ProxyGeminiRequest>(
         }
     }
 );
+
+// Study Binder Feature
+export { parseDocument } from "./api/parseDocument";

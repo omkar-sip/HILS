@@ -1,6 +1,12 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import 'katex/dist/katex.min.css'
 import type { AIResponse } from '../types/ai.types'
 
 interface Props {
@@ -33,7 +39,28 @@ export default function PlannerRenderer({ response }: Props) {
                         li: ({ children }: MDProp) => <li className="text-hils-text-muted pl-1">{children}</li>,
                         strong: ({ children }: MDProp) => <strong className="font-semibold text-white">{children}</strong>,
                         em: ({ children }: MDProp) => <em className="italic text-hils-text-dim">{children}</em>,
+                        code(props) {
+                            const { children, className, node, ref, ...rest } = props
+                            const match = /language-(\w+)/.exec(className || '')
+                            const isInline = !match && !className;
+                            return !isInline ? (
+                                <SyntaxHighlighter
+                                    {...rest}
+                                    PreTag="div"
+                                    children={String(children).replace(/\n$/, '')}
+                                    language={match ? match[1] : 'text'}
+                                    style={vscDarkPlus}
+                                    className="rounded-md my-4 border border-hils-border !bg-black/50"
+                                />
+                            ) : (
+                                <code {...rest} className="bg-hils-bg border border-hils-border px-1.5 py-0.5 rounded text-hils-accent text-sm">
+                                    {children}
+                                </code>
+                            )
+                        }
                     }}
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
                 >
                     {response.explanation}
                 </ReactMarkdown>
