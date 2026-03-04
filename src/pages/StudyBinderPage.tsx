@@ -1,17 +1,16 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+
 import {
-    UploadCloud, FileText,
-    Loader2, AlertTriangle, Zap, Trash2, BookOpen
+    UploadCloud,
+    Loader2, AlertTriangle, BookOpen
 } from 'lucide-react'
 import { useBinderStore } from '@/mcps/binder/store/useBinderStore';
 import { parseDocumentFile } from '@/mcps/binder/services/binderService';
 import PlaylistCard from '@/mcps/binder/components/PlaylistCard';
 
 export default function StudyBinderPage() {
-    const navigate = useNavigate();
-    const { documents, addDocument, removeDocument } = useBinderStore();
+    const { documents, addDocument } = useBinderStore();
 
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);

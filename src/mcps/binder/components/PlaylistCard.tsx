@@ -63,7 +63,8 @@ export default function PlaylistCard({ doc }: PlaylistCardProps) {
         if (index >= editQuestions.length - 1) return;
         setEditQuestions(prev => {
             const nextItem = prev[index + 1] || '';
-            const mergedText = prev[index].trim() + '\n' + nextItem.trim();
+            const currentItem = prev[index] || '';
+            const mergedText = currentItem.trim() + '\n' + nextItem.trim();
             const copy = [...prev];
             copy[index] = mergedText;
             copy.splice(index + 1, 1);

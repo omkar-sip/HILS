@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-    ArrowLeft, ArrowRight, BookOpen, Brain, FileText,
-    Telescope, CheckCircle2, Loader2, AlertTriangle,
+    ArrowLeft, ArrowRight, BookOpen, FileText,
+    CheckCircle2, Loader2, AlertTriangle,
     Volume2, Zap
 } from 'lucide-react'
 import { vtuSyllabus } from '@/shared/data/vtuSyllabus'
@@ -14,23 +14,17 @@ import ExplanationRenderer from '@/mcps/ai-engine/components/ExplanationRenderer
 import PlannerRenderer from '@/mcps/ai-engine/components/PlannerRenderer'
 import VoiceTeacher from '@/mcps/ai-engine/components/VoiceTeacher'
 import PersonaSelector from '@/mcps/persona/components/PersonaSelector'
-import { FEATURE_FLAGS } from '@/shared/config/featureFlags'
 import type { LearningMode } from '@/mcps/ai-engine/types/ai.types'
 
 // ─── Tab Configuration ───
 
-const newModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
+const modeOptionsList: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
     { mode: 'planner', label: 'Planner', icon: BookOpen },
     { mode: 'explain_v2', label: 'Explanation', icon: BookOpen },
     { mode: 'exam_answer', label: 'Exam Answer', icon: FileText },
     { mode: 'rapid_revision', label: 'Rapid Revision', icon: Zap },
-    { mode: 'voice_teacher', label: 'Voice Teacher', icon: Volume2 },
-]
-
-const legacyModeOptions: { mode: LearningMode; label: string; icon: typeof BookOpen }[] = [
-    { mode: 'deep-dive', label: 'Deep Dive', icon: Telescope },
-    { mode: 'quiz', label: 'Quiz', icon: Brain },
     { mode: 'summary', label: 'Summary', icon: FileText },
+    { mode: 'voice_teacher', label: 'Voice Teacher', icon: Volume2 },
 ]
 
 export default function TopicPage() {
@@ -45,12 +39,7 @@ export default function TopicPage() {
     const { isTopicCompleted, markComplete } = useProgressStore()
 
     // Build mode options based on feature flag
-    const modeOptions = useMemo(() => {
-        if (FEATURE_FLAGS.showLegacyTabs) {
-            return [...newModeOptions, ...legacyModeOptions]
-        }
-        return newModeOptions
-    }, [])
+    const modeOptions = modeOptionsList
 
     // Find topic in VTU syllabus tree (branches → semesters → subjects → modules → topics)
     const topicContext = useMemo(() => {
@@ -168,9 +157,7 @@ export default function TopicPage() {
         switch (activeMode) {
             case 'planner': return 'Generate Plan'
             case 'explain_v2': return 'Generate Explanation'
-            case 'quiz': return 'Generate Quiz'
             case 'summary': return 'Generate Summary'
-            case 'deep-dive': return 'Generate Deep Dive'
             case 'exam_answer': return 'Generate Exam Answer'
             case 'rapid_revision': return 'Generate Revision Notes'
             case 'voice_teacher': return 'Generate Explanation'
@@ -322,7 +309,7 @@ export default function TopicPage() {
                     )
                 ) : (
                     <div className="glass-card flex flex-col items-center justify-center p-8 text-center min-h-[300px]">
-                        <Brain className="w-12 h-12 text-hils-text-dim mx-auto mb-4" />
+                        <BookOpen className="w-12 h-12 text-hils-text-dim mx-auto mb-4" />
                         <h3 className="text-lg font-semibold text-hils-text mb-2">Ready to learn</h3>
                         <p className="text-sm text-hils-text-muted mb-6 max-w-md mx-auto">
                             Select a learning mode and click Generate to get an AI-powered explanation

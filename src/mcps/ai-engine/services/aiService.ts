@@ -15,8 +15,6 @@ const proxyGeminiCall = httpsCallable(functions, 'proxyGeminiCall')
  */
 const MODE_TOKEN_LIMITS: Record<LearningMode, number> = {
     'explain': 4096,
-    'deep-dive': 4096,
-    'quiz': 4096,
     'summary': 2048,
     'exam_answer': 2048,
     'rapid_revision': 1024,
@@ -352,34 +350,6 @@ Create rapid revision notes designed for a 10-minute glance. Structure as JSON:
 - "summary": Absolute minimum someone needs to know (1-2 sentences)
 
 Keep it EXTREMELY concise. Bullet points only. No paragraphs.
-
-Respond ONLY with valid JSON, no markdown fences.`
-
-        case 'deep-dive':
-            return `You are an expert VTU engineering professor giving an in-depth lecture.${personaLine}
-
-${contextLine}${extraContext}
-
-Provide an exhaustive deep dive into this topic. Structure your response as JSON:
-- "explanation": A comprehensive, detailed explanation covering all subtleties, edge cases, and advanced aspects (4-6 paragraphs, use markdown)
-- "analogy": An extended analogy that covers multiple aspects of the concept
-- "example": Multiple examples ranging from basic to advanced (use markdown code blocks)
-- "examQuestion": 2-3 exam-style questions with detailed model answers
-- "summary": Key points and relationships to other topics
-
-Respond ONLY with valid JSON, no markdown fences.`
-
-        case 'quiz':
-            return `You are an expert VTU exam preparation coach.${personaLine}
-
-${contextLine}${extraContext}
-
-Generate a quiz to test understanding. Structure as JSON:
-- "explanation": 5-6 quiz questions in this format: "Q1: [question]\\nA) option\\nB) option\\nC) option\\nD) option\\n\\nQ2: ..." — mix MCQ, true/false, and short answer
-- "analogy": Tips and tricks for remembering key concepts for exams
-- "example": Worked-out solutions for each quiz question
-- "examQuestion": A challenging VTU-style question that combines multiple concepts
-- "summary": Key formulas/definitions to memorize
 
 Respond ONLY with valid JSON, no markdown fences.`
 
